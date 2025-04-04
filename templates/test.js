@@ -207,6 +207,7 @@ const data = [
         name: "Purchase orders",
         submenus: [
           {
+            id_record: "",
             name: "Request PO",
             description: "Request PORequest PORequest PORequest PO",
             main_component: {
@@ -237,6 +238,7 @@ const data = [
             ],
           },
           {
+            id_record: "",
             name: "Approval PO",
             description:
               "Approval POApproval POApproval POApproval POApproval PO",
@@ -260,6 +262,7 @@ const data = [
         name: "Purchase Requisition",
         submenus: [
           {
+            id_record: "",
             name: "Request PR",
             description: "Request PRRequest PRRequest PRRequest PRRequest PR",
             main_component: {
@@ -290,6 +293,7 @@ const data = [
             ],
           },
           {
+            id_record: "",
             name: "Approval PR",
             description: "Approval PRApproval PRApproval PRApproval PR",
             main_component: {

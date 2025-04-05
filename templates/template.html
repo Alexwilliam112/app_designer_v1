@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grouped Table</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         table {
             width: 100%;
@@ -25,129 +26,7 @@
     </style>
 </head>
 <body>
-
-<table>
-    <thead>
-        <tr>
-            <th>Module</th>
-            <th>Menu Name</th>
-            <th>Sub-menu Name</th>
-            <th>Description</th>
-            <th>Component Type</th>
-            <th>Component Name</th>
-            <th>Feature</th>
-            <th>Unit</th>
-            <th>Project Manager</th>
-            <th>System Analyst</th>
-            <th>Solution Engineer</th>
-            <th>UI Solution Engineer</th>
-            <th>Quality Assurance</th>
-        </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td rowspan="13">Purchasing Management</td>
-        <td rowspan="6">Purchase orders</td>
-        <td rowspan="3">Request PO</td>
-        <td rowspan="3">Request PORequest PORequest PORequest PO</td>
-        <td rowspan="1">MAIN</td>
-        <td rowspan="1">REQUESTOR TABLE</td>
-        <td rowspan="1">feature of component</td>
-        <td rowspan="1">unit of component</td>
-        <td rowspan="1">2</td>
-        <td rowspan="1">3</td>
-        <td rowspan="1">4</td>
-        <td rowspan="1">1</td>
-        <td rowspan="1">2</td>
-      </tr>
-      <tr>
-        <td rowspan="1">SUB-COMPONENT</td>
-        <td rowspan="1">AUTOMATIONS</td>
-        <td rowspan="1">feature of component</td>
-        <td rowspan="1">unit of component</td>
-        <td rowspan="1">2</td>
-        <td rowspan="1">3</td>
-        <td rowspan="1">4</td>
-        <td rowspan="1">1</td>
-        <td rowspan="1">2</td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD COMPONENT</button></td><td colspan="8"></td>
-      </tr>
-      <tr>
-        <td rowspan="2">Approval PO</td>
-        <td rowspan="2">Approval POApproval POApproval POApproval POApproval PO</td>
-        <td rowspan="1">MAIN</td>
-        <td rowspan="1">APPROVER TABLE</td>
-        <td rowspan="1">feature of component</td>
-        <td rowspan="1">unit of component</td>
-        <td rowspan="1">2</td>
-        <td rowspan="1">3</td>
-        <td rowspan="1">4</td>
-        <td rowspan="1">1</td>
-        <td rowspan="1">2</td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD COMPONENT</button></td><td colspan="8"></td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD SUB-MENU</button></td><td colspan="10"></td>
-      </tr>
-      <tr>
-        <td rowspan="6">Purchase Requisition</td>
-        <td rowspan="3">Request PR</td>
-        <td rowspan="3">Request PRRequest PRRequest PRRequest PRRequest PR</td>
-        <td rowspan="1">MAIN</td>
-        <td rowspan="1">REQUESTOR TABLE PR</td>
-        <td rowspan="1">feature of component</td>
-        <td rowspan="1">unit of component</td>
-        <td rowspan="1">2</td>
-        <td rowspan="1">3</td>
-        <td rowspan="1">4</td>
-        <td rowspan="1">1</td>
-        <td rowspan="1">2</td>
-      </tr>
-      <tr>
-        <td rowspan="1">SUB-COMPONENT</td>
-        <td rowspan="1">AUTOMATION PDF</td>
-        <td rowspan="1">feature of component</td>
-        <td rowspan="1">unit of component</td>
-        <td rowspan="1">2</td>
-        <td rowspan="1">3</td>
-        <td rowspan="1">4</td>
-        <td rowspan="1">1</td>
-        <td rowspan="1">2</td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD COMPONENT</button></td><td colspan="8"></td>
-      </tr>
-      <tr>
-        <td rowspan="2">Approval PR</td>
-        <td rowspan="2">Approval PRApproval PRApproval PRApproval PR</td>
-        <td rowspan="1">MAIN</td>
-        <td rowspan="1">APPROVER TABLE PR</td>
-        <td rowspan="1">feature of component</td>
-        <td rowspan="1">unit of component</td>
-        <td rowspan="1">2</td>
-        <td rowspan="1">3</td>
-        <td rowspan="1">4</td>
-        <td rowspan="1">1</td>
-        <td rowspan="1">2</td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD COMPONENT</button></td><td colspan="8"></td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD SUB-MENU</button></td><td colspan="10"></td>
-      </tr>
-      <tr>
-        <td colspan="1"><button>ADD MENU</button></td><td colspan="11"></td>
-      </tr>
-      <tr>
-        <td colspan="13"><button>ADD NEW MODULE</button></td>
-      </tr>
-    </tbody>
-</table>
+<div class="flex flex-col gap-2.5 bg-[#1b1d20] px-[15px] py-2.5 rounded-lg border border-solid border-[#37383b]"><div class="flex items-center gap-2 self-stretch bg-[#0f1114] px-3 py-[5px] rounded"><div class="w-5 h-5"><svg class="w-[15px] h-[15px]"></svg></div><span class="font-medium text-[14px] text-[#757575]">Search</span></div><div class="flex flex-col gap-[5px]"><div class="h-6 flex items-center gap-3 px-1 rounded-lg"><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#898989]">UTILITY</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="flex items-center gap-2"><div class="w-5 h-5"><svg class="w-[16.66666603088379px] h-[16.66666603088379px]"></svg></div><span class="font-medium text-[14px] text-[#bbbcbd]">Decision</span></div></div></div><div class="flex flex-col gap-[5px]"><div class="h-6 flex items-center gap-3 px-1 rounded-lg"><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#898989]">APP BUILDER</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[13.5px] h-[12.000000953674316px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Master Data</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[13.5px] h-[12.000000953674316px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Configuration</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[13.5px] h-[12.000000953674316px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Administrator</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[13.5px] h-[12.000000953674316px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Requestor Menu</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[13.5px] h-[12.000000953674316px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Approver Menu</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[13.5px] h-[12.000000953674316px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Custom UI</span></div></div></div><div class="flex flex-col gap-[5px]"><div class="h-6 flex items-center gap-3 px-1 rounded-lg"><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#898989]">LOWCODE</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.999999046325684px] h-[14.02500057220459px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Lowcode Data Entry</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.999999046325684px] h-[14.02500057220459px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Lowcode Dashboard</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.999999046325684px] h-[14.02500057220459px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Lowcode Portal</span></div></div></div><div class="flex flex-col gap-[5px]"><div class="h-6 flex items-center gap-3 px-1 rounded-lg"><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#898989]">WORKFLOW</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.999999046325684px] h-[14.250500679016113px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Integration Core Product</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.999999046325684px] h-[14.250500679016113px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Integration Client System</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.999999046325684px] h-[14.250500679016113px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Integration Ext. System</span></div></div><div class="h-6 flex items-center gap-[13px] px-1 rounded-lg"><svg class="w-3.5 h-[18px]"></svg><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Automation Block</span></div></div></div><div class="flex flex-col gap-[5px]"><div class="h-6 flex items-center gap-3 px-1 rounded-lg"><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#898989]">INSIGHT</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.966202735900879px] h-[14.961645126342773px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Dashboard Builder</span></div></div><div class="h-6 flex items-center gap-2 px-1 rounded-lg"><div class="w-[18px] h-[18px]"><svg class="w-[14.966202735900879px] h-[14.961645126342773px]"></svg></div><div class="flex items-center gap-2"><span class="font-medium text-[14px] text-[#bbbcbd]">Custom Reports</span></div></div></div></div>
 
 </body>
 </html>

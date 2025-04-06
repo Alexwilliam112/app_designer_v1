@@ -41,8 +41,8 @@ export default function MainFrame() {
             gap={60}
             variant={BackgroundVariant.Dots}
           />
-          <Controls position="top-left" orientation="horizontal">
-            <ControlButton onClick={addNode}>
+          <Controls position="top-left" orientation="horizontal" style={{ color: "#ffffff", background: "#000000" }}>
+            <ControlButton onClick={addNode} style={{ background: "#000000", color: "#ffffff" }}>
               <MagicWandIcon />
             </ControlButton>
           </Controls>

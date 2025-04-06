@@ -2,6 +2,8 @@
 
 import { StateCreator } from 'zustand'
 import { NodeSlice } from './node-slice'
+import flowApi from '@/services/flow-api'
+import { DataSlice } from './data-slice'
 
 export interface PanelSlice {
   selectedNode: ComponentNodeData | undefined
@@ -9,7 +11,7 @@ export interface PanelSlice {
   updateComponent(component: ComponentNodeData): Promise<void>
 }
 
-export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], PanelSlice> = (
+export const createPanelSlice: StateCreator<PanelSlice & NodeSlice & DataSlice, [], [], PanelSlice> = (
   set,
   get
 ) => ({
@@ -19,7 +21,7 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], Pane
   },
   async updateComponent(component) {
     try {
-      const { nodes } = get()
+      const { nodes, edges, id_estimation } = get()
 
       const updated = nodes.slice()
       const updateIndex = updated.findIndex(n => n.id === component.id)
@@ -29,11 +31,11 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], Pane
         return
       }
 
+      await flowApi.saveFlow({ id_estimation, payload: { nodes: updated, edges } })
+
       set({ nodes: updated })
-    } catch (error) {
-
-    } finally {
-
+    } catch (error: unknown) {
+      alert("Error saving flow:" + String(error))
     }
   },
 })

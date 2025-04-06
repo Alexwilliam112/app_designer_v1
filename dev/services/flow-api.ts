@@ -1,5 +1,7 @@
 "use client"
 
+import { Edge, Node } from "@xyflow/react"
+
 const flowApi = {
     async getBaseComponents() {
         const res = await fetch("https://api-oos.jojonomic.com/27407/effort-calculator/v2/base-components")
@@ -23,11 +25,13 @@ const flowApi = {
         return data as BaseComponent[]
     },
 
-    async saveFlow({ id_component }: { id_component: string }) {
+    async saveFlow({ id_component, payload }: { id_component: string, payload: { nodes: Node[]; edges: Edge[] } }) {
         const url = new URL("https://api-oos.jojonomic.com/27407/effort-calculator/v2/save-flow")
         url.searchParams.append('id_component', id_component)
 
-        const res = await fetch(url.toString())
+        const res = await fetch(url.toString(), {
+            body: JSON.stringify(payload)
+        })
 
         const { data, error, message } = await res.json()
 

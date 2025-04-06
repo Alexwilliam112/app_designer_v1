@@ -11,14 +11,16 @@ declare global {
 
     interface ComponentNodeData extends Record<string, unknown> {
         id: string
-        featureName: string
+        menuName: string
         featureIcon: ReactNode
         targetPosition: 'top' | 'bottom' | 'right' | 'left' | ''
         component: Feature
     }
 
     interface Feature {
+        id_component: string
         title: string
+        description: string
         module: ModuleId
         category: string
         type: string

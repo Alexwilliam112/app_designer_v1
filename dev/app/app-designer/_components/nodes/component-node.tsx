@@ -41,7 +41,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
         position={data.targetPosition ? positioning[data.targetPosition] : Position.Left}
         id={`${data.id}-${data.targetPosition}`}
       />
-      {data.featureName &&
+      {data.menuName &&
         sourceHandleKeys.map((p: string) => {
           return (
             <AddNodeHandle
@@ -102,7 +102,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <CurlyBraces className="w-4 h-4" />
-                  <p>{data.component.category.name}</p>
+                  <p>{data.component.category}</p>
                 </div>
               </td>
             </tr>
@@ -112,7 +112,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <Code2 className="w-4 h-4" />
-                  <p>{data.component.type.name}</p>
+                  <p>{data.component.type}</p>
                 </div>
               </td>
             </tr>

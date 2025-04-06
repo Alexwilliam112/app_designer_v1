@@ -40,9 +40,15 @@ export default function FeaturePanel() {
 
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode)
   const selectedNode = useFlowStore((state) => state.selectedNode)
+  const save = useFlowStore((state) => state.updateComponent)
 
   const form = useForm({
     resolver: zodResolver(featureSchema),
+    defaultValues: {
+      module: '',
+      name: selectedNode?.component.title || '',
+      description: selectedNode?.component.description || '',
+    },
   })
 
   const onSubmit = (values: z.infer<typeof featureSchema>) => {
@@ -51,7 +57,13 @@ export default function FeaturePanel() {
       return
     }
 
-    selectedNode.featureName = values.name
+    const updated = selectedNode
+
+    updated.menuName = values.name
+    updated.component.title = values.name
+    updated.component.description = values.description
+
+    save(updated)
   }
 
   return (

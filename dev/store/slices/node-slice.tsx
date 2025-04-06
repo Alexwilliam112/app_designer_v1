@@ -84,7 +84,7 @@ export const createNodeSlice: StateCreator<
       return
     }
 
-    const item = group?.items.find((i) => i.id === id) // Fixed: Changed g.id to i.id to match the full path
+    const item = group.items.find((i) => i.id === id) // Fixed: Changed g.id to i.id to match the full path
 
     if (!item) {
       console.error(`Item with groupId ${group?.id} not found`)
@@ -262,18 +262,21 @@ export const createNodeSlice: StateCreator<
       return { x: A.x, y: A.y }
     }
 
-    const initialObj = { id: '', name: '' }
+    const initialObj = { id_module: '', name: '' }
+    // const component =
 
     const data: ComponentNodeData = {
       id: '',
-      featureName: '',
+      menuName: '',
       featureIcon: <item.icon className="w-4 h-4" />,
       targetPosition,
       component: {
         title: '',
+        id_component: item.id_component,
+        description: '',
         module: initialObj,
-        category: initialObj,
-        type: initialObj,
+        category: group.label,
+        type: item.label,
       },
     }
 

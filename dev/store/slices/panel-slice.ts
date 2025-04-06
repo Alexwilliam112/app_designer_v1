@@ -6,7 +6,7 @@ import { NodeSlice } from './node-slice'
 export interface PanelSlice {
   selectedNode: ComponentNodeData | undefined
   setSelectedNode(selected: ComponentNodeData | undefined): void
-  updateComponent(component: ComponentNodeData): void
+  updateComponent(component: ComponentNodeData): Promise<void>
 }
 
 export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], PanelSlice> = (
@@ -17,7 +17,7 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], Pane
   setSelectedNode(selected) {
     set({ selectedNode: selected })
   },
-  updateComponent(component) {
+  async updateComponent(component) {
     const { nodes } = get()
 
     const updated = nodes.slice()
@@ -28,6 +28,6 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], Pane
       return
     }
 
-    set({})
+    set({ nodes: updated })
   },
 })

@@ -242,14 +242,18 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       return { x: A.x, y: A.y }
     }
 
+    const initialObj = { id: '', name: '' }
+
     const data: ComponentNodeData = {
       id: '',
       featureName: item?.label || '',
       featureIcon: <item.icon className="w-4 h-4" />,
-      module: group?.label || '',
-      category: '',
-      type: '',
       targetPosition,
+      component: {
+        module: initialObj,
+        category: initialObj,
+        type: initialObj,
+      },
     }
 
     const position = forceLayout(nodes, calculatePosition())

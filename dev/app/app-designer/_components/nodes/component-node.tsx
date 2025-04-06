@@ -20,10 +20,12 @@ export interface ComponentNodeData extends Record<string, unknown> {
   id: string
   featureName: string
   featureIcon: ReactNode
-  module: string
-  category: string
-  type: string
   targetPosition: 'top' | 'bottom' | 'right' | 'left' | ''
+  component: {
+    module: ForeignObj
+    category: ForeignObj
+    type: ForeignObj
+  }
 }
 
 interface ComponentNodeProps {
@@ -86,7 +88,7 @@ export default function ComponentNode({ data }: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <CurlyBraces className="w-4 h-4" />
-                  <p>{data.module}</p>
+                  <p>{data.component.module.name}</p>
                 </div>
               </td>
             </tr>
@@ -96,7 +98,7 @@ export default function ComponentNode({ data }: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <CurlyBraces className="w-4 h-4" />
-                  <p>{data.category}</p>
+                  <p>{data.component.category.name}</p>
                 </div>
               </td>
             </tr>
@@ -106,7 +108,7 @@ export default function ComponentNode({ data }: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <Code2 className="w-4 h-4" />
-                  <p>{data.type}</p>
+                  <p>{data.component.type.name}</p>
                 </div>
               </td>
             </tr>

@@ -119,6 +119,58 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       }
     }
 
+    function forceLayout(nodes: Node[], newPosition: { x: number; y: number }) {
+      const gap = 100 // Gap between nodes
+      const A = {
+        x: newPosition.x,
+        y: newPosition.y,
+        width: 288,
+        height: 200,
+      }
+
+      let hasCollision = true
+
+      let iterationCount = 0
+      const maxIteration = 100
+
+      while (hasCollision && iterationCount < maxIteration) {
+        hasCollision = false
+        iterationCount++
+
+        for (const node of nodes) {
+          const B = {
+            x: node.position.x,
+            y: node.position.y,
+            width: node.measured!.width,
+            height: node.measured!.height,
+          }
+
+          const AcenterX = A.x + A.width / 2
+          const AcenterY = A.y + A.height / 2
+          const BcenterX = B.x + B.width! / 2
+          const BcenterY = B.y + B.height! / 2
+
+          const dx = AcenterX - BcenterX
+          const dy = AcenterY - BcenterY
+
+          // Include the gap in the overlap calculation
+          const px = (A.width + B.width! + gap) / 2 - Math.abs(dx)
+          const py = (A.height + B.height! + gap) / 2 - Math.abs(dy)
+
+          if (px > 0 && py > 0) {
+            hasCollision = true // Mark that a collision was detected
+            if (px < py) {
+              A.x += dx > 0 ? px : -px
+            } else {
+              A.y += dy > 0 ? py : -py
+            }
+          }
+        }
+      }
+
+      return { x: A.x, y: A.y }
+    }
+
     const data: ComponentNodeData = {
       id: '',
       featureName: item?.label || '',
@@ -129,7 +181,7 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       targetPosition,
     }
 
-    const position = calculatePosition()
+    const position = forceLayout(nodes, calculatePosition())
 
     const newNode = {
       id: `component-${Date.now()}`, // Using timestamp to ensure unique IDs

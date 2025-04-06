@@ -1,42 +1,79 @@
-'use client'
+'use client';
 
-import { Background, BackgroundVariant, Node, Panel, ReactFlow } from '@xyflow/react'
-import { ChartPie, Database, Monitor, MonitorCog, Play, Webhook, Zap } from 'lucide-react'
-import { useCallback } from 'react'
-import EntryNode from './nodes/entry-node'
-import ComponentNode from './nodes/component-node'
-import { useFlowStore } from '@/store/use-store'
-import FeaturePanel from './feature-panel'
+import { Background, BackgroundVariant, Node, Panel, ReactFlow } from '@xyflow/react';
+import { ChartPie, Database, Monitor, MonitorCog, Play, Webhook, Zap } from 'lucide-react';
+import { useCallback } from 'react';
+import EntryNode from './nodes/entry-node';
+import ComponentNode from './nodes/component-node';
+import { useFlowStore } from '@/store/use-store';
+import FeaturePanel from './feature-panel';
+import ELK from 'elkjs/lib/elk.bundled.js';
+
+const elk = new ELK();
 
 const nodeTypes = {
   entryPoint: EntryNode,
   component: ComponentNode,
-}
+};
 
-const proOptions = { hideAttribution: true }
+const proOptions = { hideAttribution: true };
 
 export default function Flow() {
-  const nodes = useFlowStore((state) => state.nodes)
-  const edges = useFlowStore((state) => state.edges)
-  const setNodes = useFlowStore((state) => state.setNodes)
-  const onEdgesChange = useFlowStore((state) => state.onEdgesChange)
-  const onNodesChange = useFlowStore((state) => state.onNodesChange)
-  const onConnect = useFlowStore((state) => state.onConnect)
+  const nodes = useFlowStore((state) => state.nodes);
+  const edges = useFlowStore((state) => state.edges);
+  const setNodes = useFlowStore((state) => state.setNodes);
+  const onEdgesChange = useFlowStore((state) => state.onEdgesChange);
+  const onNodesChange = useFlowStore((state) => state.onNodesChange);
+  const onConnect = useFlowStore((state) => state.onConnect);
 
   const addStartPoint = useCallback(() => {
     const startNode: Node = {
-      // Changed from NodeChange to Node
       id: `entry-${Date.now()}`,
       type: 'entryPoint',
       position: { x: 0, y: 0 + nodes.length * 50 },
       data: {
         id: `entry-${Date.now()}`,
       },
-    }
+    };
 
-    // Directly add the node to the store
-    setNodes([...nodes, startNode])
-  }, [nodes, setNodes]) // Added dependencies
+    setNodes([...nodes, startNode]);
+  }, [nodes, setNodes]);
+
+  const applyLayout = useCallback(
+    async (layoutOptions) => {
+      const graph = {
+        id: 'root',
+        layoutOptions: layoutOptions,
+        children: nodes.map((node) => ({
+          id: node.id,
+          width: 400, // Default width if not measured
+          height: 350, // Default height if not measured
+        })),
+        edges: edges.map((edge) => ({
+          id: edge.id,
+          sources: [edge.source],
+          targets: [edge.target],
+        })),
+      };
+
+      const result = await elk.layout(graph);
+
+      const updatedNodes = nodes.map((node) => {
+        const layoutNode = result.children?.find((n) => n.id === node.id);
+        return layoutNode
+          ? {
+              ...node,
+              position: { x: layoutNode.x, y: layoutNode.y },
+              positionAbsolute: { x: layoutNode.x, y: layoutNode.y },
+            }
+          : { ...node }; // Ensure immutability
+      });
+
+      setNodes([...updatedNodes]); // Create a new array to update state immutably
+    },
+    [nodes, edges, setNodes]
+  );
+
   return (
     <ReactFlow
       nodes={nodes}
@@ -90,9 +127,31 @@ export default function Flow() {
           </div>
         </div>
       </Panel>
+      <Panel position="top-right">
+        <button
+          onClick={() =>
+            applyLayout({
+              'elk.algorithm': 'layered',
+              'elk.direction': 'DOWN',
+            })
+          }
+        >
+          Vertical Layout
+        </button>
+        <button
+          onClick={() =>
+            applyLayout({
+              'elk.algorithm': 'layered',
+              'elk.direction': 'RIGHT',
+            })
+          }
+        >
+          Horizontal Layout
+        </button>
+      </Panel>
       <Panel position="top-right" className="w-fit">
-        <FeaturePanel />
+        {/* <FeaturePanel /> */}
       </Panel>
     </ReactFlow>
-  )
+  );
 }

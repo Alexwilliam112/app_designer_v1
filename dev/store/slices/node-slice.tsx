@@ -120,93 +120,99 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
     }
 
     function forceLayout(nodes, newPosition) {
-      const gap = 100; // Gap between nodes
-      const step = 10; // Step size for circular search
+      const gap = 100 // Gap between nodes
+      const step = 10 // Step size for circular search
       let A = {
         x: newPosition.x,
         y: newPosition.y,
         width: 300,
         height: 250,
-      };
-    
-      let hasCollision = true;
-      const maxIterations = 100; // Safety limit to prevent infinite loops
-      let iterationCount = 0;
-    
+      }
+
+      let hasCollision = true
+      const maxIterations = 100 // Safety limit to prevent infinite loops
+      let iterationCount = 0
+
       while (hasCollision && iterationCount < maxIterations) {
-        hasCollision = false;
-        iterationCount++;
-    
+        hasCollision = false
+        iterationCount++
+
         for (const node of nodes) {
           const B = {
             x: node.position.x,
             y: node.position.y,
             width: node.measured.width,
             height: node.measured.height,
-          };
-    
-          const AcenterX = A.x + A.width / 2;
-          const AcenterY = A.y + A.height / 2;
-          const BcenterX = B.x + B.width / 2;
-          const BcenterY = B.y + B.height / 2;
-    
-          const dx = AcenterX - BcenterX;
-          const dy = AcenterY - BcenterY;
-    
+          }
+
+          const AcenterX = A.x + A.width / 2
+          const AcenterY = A.y + A.height / 2
+          const BcenterX = B.x + B.width / 2
+          const BcenterY = B.y + B.height / 2
+
+          const dx = AcenterX - BcenterX
+          const dy = AcenterY - BcenterY
+
           // Include the gap in the overlap calculation
-          const px = (A.width + B.width + gap) / 2 - Math.abs(dx);
-          const py = (A.height + B.height + gap) / 2 - Math.abs(dy);
-    
+          const px = (A.width + B.width + gap) / 2 - Math.abs(dx)
+          const py = (A.height + B.height + gap) / 2 - Math.abs(dy)
+
           if (px > 0 && py > 0) {
-            hasCollision = true; // Mark that a collision was detected
-    
+            hasCollision = true // Mark that a collision was detected
+
             // Circular pattern adjustment with randomized starting direction
-            const angleStep = Math.PI / 4; // 8 directions (45-degree increments)
-            const randomStartAngle = Math.random() * 2 * Math.PI; // Randomize starting angle
-            let resolved = false;
-    
-            for (let angle = randomStartAngle; angle < randomStartAngle + 2 * Math.PI; angle += angleStep) {
-              const offsetX = Math.cos(angle) * step;
-              const offsetY = Math.sin(angle) * step;
-    
-              const testX = A.x + offsetX;
-              const testY = A.y + offsetY;
-    
+            const angleStep = Math.PI / 4 // 8 directions (45-degree increments)
+            const randomStartAngle = Math.random() * 2 * Math.PI // Randomize starting angle
+            let resolved = false
+
+            for (
+              let angle = randomStartAngle;
+              angle < randomStartAngle + 2 * Math.PI;
+              angle += angleStep
+            ) {
+              const offsetX = Math.cos(angle) * step
+              const offsetY = Math.sin(angle) * step
+
+              const testX = A.x + offsetX
+              const testY = A.y + offsetY
+
               // Check if the new position resolves the collision
-              const testCenterX = testX + A.width / 2;
-              const testCenterY = testY + A.height / 2;
-    
-              const testDx = testCenterX - BcenterX;
-              const testDy = testCenterY - BcenterY;
-    
-              const testPx = (A.width + B.width + gap) / 2 - Math.abs(testDx);
-              const testPy = (A.height + B.height + gap) / 2 - Math.abs(testDy);
-    
+              const testCenterX = testX + A.width / 2
+              const testCenterY = testY + A.height / 2
+
+              const testDx = testCenterX - BcenterX
+              const testDy = testCenterY - BcenterY
+
+              const testPx = (A.width + B.width + gap) / 2 - Math.abs(testDx)
+              const testPy = (A.height + B.height + gap) / 2 - Math.abs(testDy)
+
               if (testPx <= 0 || testPy <= 0) {
                 // No collision at this position
-                A.x = testX;
-                A.y = testY;
-                resolved = true;
-                break;
+                A.x = testX
+                A.y = testY
+                resolved = true
+                break
               }
             }
-    
+
             if (!resolved) {
               // Randomize between x and y adjustments, and positive/negative directions
               if (Math.random() > 0.5) {
-                A.x += Math.random() > 0.5 ? step : -step;
+                A.x += Math.random() > 0.5 ? step : -step
               } else {
-                A.y += Math.random() > 0.5 ? step : -step;
+                A.y += Math.random() > 0.5 ? step : -step
               }
             }
           }
         }
       }
-    
+
       if (iterationCount >= maxIterations) {
-        console.warn("forceLayout: Maximum iterations reached. Collision resolution may be incomplete.");
+        console.warn(
+          'forceLayout: Maximum iterations reached. Collision resolution may be incomplete.'
+        )
       }
-    
+
       // Recheck layer to ensure no collisions remain
       for (const node of nodes) {
         const B = {
@@ -214,26 +220,26 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
           y: node.position.y,
           width: node.measured.width,
           height: node.measured.height,
-        };
-    
-        const AcenterX = A.x + A.width / 2;
-        const AcenterY = A.y + A.height / 2;
-        const BcenterX = B.x + B.width / 2;
-        const BcenterY = B.y + B.height / 2;
-    
-        const dx = AcenterX - BcenterX;
-        const dy = AcenterY - BcenterY;
-    
-        const px = (A.width + B.width + gap) / 2 - Math.abs(dx);
-        const py = (A.height + B.height + gap) / 2 - Math.abs(dy);
-    
+        }
+
+        const AcenterX = A.x + A.width / 2
+        const AcenterY = A.y + A.height / 2
+        const BcenterX = B.x + B.width / 2
+        const BcenterY = B.y + B.height / 2
+
+        const dx = AcenterX - BcenterX
+        const dy = AcenterY - BcenterY
+
+        const px = (A.width + B.width + gap) / 2 - Math.abs(dx)
+        const py = (A.height + B.height + gap) / 2 - Math.abs(dy)
+
         if (px > 0 && py > 0) {
-          console.warn("forceLayout: Collision detected during recheck. Resolving again.");
-          return forceLayout(nodes, { x: A.x + step, y: A.y + step }); // Retry with a slight offset
+          console.warn('forceLayout: Collision detected during recheck. Resolving again.')
+          return forceLayout(nodes, { x: A.x + step, y: A.y + step }) // Retry with a slight offset
         }
       }
-    
-      return { x: A.x, y: A.y };
+
+      return { x: A.x, y: A.y }
     }
 
     const data: ComponentNodeData = {

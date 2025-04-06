@@ -1,7 +1,5 @@
 'use client'
 
-import { ComponentNodeData } from '@/app/app-designer/_components/nodes/component-node'
-import { commandItems } from '@/app/app-designer/_components/nodes/entry-node'
 import {
   type Edge,
   type Node,
@@ -11,6 +9,8 @@ import {
 } from '@xyflow/react'
 import { addEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
 import { StateCreator } from 'zustand'
+import { PanelSlice } from './panel-slice'
+import { DataSlice } from './data-slice'
 
 export interface NodeSlice {
   nodes: Node[]
@@ -25,9 +25,15 @@ export interface NodeSlice {
     entryId: string,
     { sourceId, targetId }: { sourceId?: string; targetId?: string }
   ): void
+  deleteFeatureNode(id: string): void
 }
 
-export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set, get) => ({
+export const createNodeSlice: StateCreator<
+  NodeSlice & PanelSlice & DataSlice,
+  [],
+  [],
+  NodeSlice
+> = (set, get) => ({
   nodes: [],
   edges: [],
 
@@ -42,8 +48,22 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
     })
   },
   onConnect: (connection) => {
+    // Create a new edge with default type
+    const newEdge: Edge = {
+      ...connection,
+      id: `edge-${Date.now()}`,
+      type: 'customEdge', // Set your desired default edge type here
+      // You can also add other default properties
+      animated: false,
+      style: { stroke: '#555' },
+      data: {
+        /* any default edge data */
+      },
+    }
+
+    // Add the new edge to your edges array
     set({
-      edges: addEdge(connection, get().edges),
+      edges: addEdge(newEdge, get().edges),
     })
   },
   setNodes: (nodes) => {
@@ -54,10 +74,10 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
   },
 
   addFeatureNode(id: string, entryId: string, { sourceId }) {
-    const { nodes, edges, setNodes, setEdges } = get()
+    const { nodes, edges, setNodes, setEdges, baseComponentGroup } = get()
 
     const ids = id.split('/')
-    const group = commandItems.find((g) => g.id === ids[0])
+    const group = baseComponentGroup.find((g) => g.id === ids[0])
 
     if (!group) {
       console.error(`Group with id ${ids[0]} not found`)
@@ -119,7 +139,7 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       }
     }
 
-    function forceLayout(nodes, newPosition) {
+    function forceLayout(nodes: Node[], newPosition: { x: number; y: number }) {
       const gap = 100 // Gap between nodes
       const step = 10 // Step size for circular search
       let A = {
@@ -141,21 +161,21 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
           const B = {
             x: node.position.x,
             y: node.position.y,
-            width: node.measured.width,
-            height: node.measured.height,
+            width: node.measured!.width,
+            height: node.measured!.height,
           }
 
           const AcenterX = A.x + A.width / 2
           const AcenterY = A.y + A.height / 2
-          const BcenterX = B.x + B.width / 2
-          const BcenterY = B.y + B.height / 2
+          const BcenterX = B.x + B.width! / 2
+          const BcenterY = B.y + B.height! / 2
 
           const dx = AcenterX - BcenterX
           const dy = AcenterY - BcenterY
 
           // Include the gap in the overlap calculation
-          const px = (A.width + B.width + gap) / 2 - Math.abs(dx)
-          const py = (A.height + B.height + gap) / 2 - Math.abs(dy)
+          const px = (A.width + B.width! + gap) / 2 - Math.abs(dx)
+          const py = (A.height + B.height! + gap) / 2 - Math.abs(dy)
 
           if (px > 0 && py > 0) {
             hasCollision = true // Mark that a collision was detected
@@ -183,8 +203,8 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
               const testDx = testCenterX - BcenterX
               const testDy = testCenterY - BcenterY
 
-              const testPx = (A.width + B.width + gap) / 2 - Math.abs(testDx)
-              const testPy = (A.height + B.height + gap) / 2 - Math.abs(testDy)
+              const testPx = (A.width + B.width! + gap) / 2 - Math.abs(testDx)
+              const testPy = (A.height + B.height! + gap) / 2 - Math.abs(testDy)
 
               if (testPx <= 0 || testPy <= 0) {
                 // No collision at this position
@@ -218,20 +238,20 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
         const B = {
           x: node.position.x,
           y: node.position.y,
-          width: node.measured.width,
-          height: node.measured.height,
+          width: node.measured!.width,
+          height: node.measured!.height,
         }
 
         const AcenterX = A.x + A.width / 2
         const AcenterY = A.y + A.height / 2
-        const BcenterX = B.x + B.width / 2
-        const BcenterY = B.y + B.height / 2
+        const BcenterX = B.x + B.width! / 2
+        const BcenterY = B.y + B.height! / 2
 
         const dx = AcenterX - BcenterX
         const dy = AcenterY - BcenterY
 
-        const px = (A.width + B.width + gap) / 2 - Math.abs(dx)
-        const py = (A.height + B.height + gap) / 2 - Math.abs(dy)
+        const px = (A.width + B.width! + gap) / 2 - Math.abs(dx)
+        const py = (A.height + B.height! + gap) / 2 - Math.abs(dy)
 
         if (px > 0 && py > 0) {
           console.warn('forceLayout: Collision detected during recheck. Resolving again.')
@@ -246,10 +266,11 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
 
     const data: ComponentNodeData = {
       id: '',
-      featureName: item?.label || '',
+      featureName: '',
       featureIcon: <item.icon className="w-4 h-4" />,
       targetPosition,
       component: {
+        title: '',
         module: initialObj,
         category: initialObj,
         type: initialObj,
@@ -273,11 +294,31 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       ...edges,
       {
         id: `edge-${Date.now()}`,
+        type: 'customEdge',
         source: entryId,
         target: newNode.id,
         sourceHandle: sourceId || null,
         targetHandle: `${newNode.id}-${targetPosition}`,
       },
     ])
+
+    get().setSelectedNode(data)
+  },
+  deleteFeatureNode(id: string) {
+    const { nodes, edges } = get()
+
+    const newNodes = nodes.filter((t) => t.id !== id)
+    set({ nodes: newNodes })
+
+    const newSourceId = edges.find((e) => e.target === id)?.source || nodes[0].id
+    const newEdges = edges.map((e, i) => {
+      if (e.source === id) {
+        e.source = newSourceId
+        e.sourceHandle = null
+      }
+
+      return e
+    })
+    set({ edges: newEdges })
   },
 })

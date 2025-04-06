@@ -1,30 +1,42 @@
-'use client';
+'use client'
 
-import { Background, BackgroundVariant, Node, Panel, ReactFlow } from '@xyflow/react';
-import { ChartPie, Database, Monitor, MonitorCog, Play, Webhook, Zap } from 'lucide-react';
-import { useCallback } from 'react';
-import EntryNode from './nodes/entry-node';
-import ComponentNode from './nodes/component-node';
-import { useFlowStore } from '@/store/use-store';
-import FeaturePanel from './feature-panel';
-import ELK from 'elkjs/lib/elk.bundled.js';
+import { Background, BackgroundVariant, Node, Panel, ReactFlow } from '@xyflow/react'
+import { ChartPie, Database, Monitor, MonitorCog, Play, Webhook, Zap } from 'lucide-react'
+import { useCallback } from 'react'
+import EntryNode from './nodes/entry-node'
+import ComponentNode from './nodes/component-node'
+import { useFlowStore } from '@/store/use-store'
+import FeaturePanel from './feature-panel'
+import ELK from 'elkjs/lib/elk.bundled.js'
+import CustomEdge from './edge'
+import { Button } from '@/components/ui/button'
 
-const elk = new ELK();
+const elk = new ELK()
 
 const nodeTypes = {
   entryPoint: EntryNode,
   component: ComponentNode,
-};
+}
 
-const proOptions = { hideAttribution: true };
+const edgeTypes = {
+  customEdge: CustomEdge,
+}
+
+const defaultEdgeOptions = {
+  animated: true,
+  type: 'entryPoint',
+}
+
+const proOptions = { hideAttribution: true }
 
 export default function Flow() {
-  const nodes = useFlowStore((state) => state.nodes);
-  const edges = useFlowStore((state) => state.edges);
-  const setNodes = useFlowStore((state) => state.setNodes);
-  const onEdgesChange = useFlowStore((state) => state.onEdgesChange);
-  const onNodesChange = useFlowStore((state) => state.onNodesChange);
-  const onConnect = useFlowStore((state) => state.onConnect);
+  const nodes = useFlowStore((state) => state.nodes)
+  const edges = useFlowStore((state) => state.edges)
+  const setNodes = useFlowStore((state) => state.setNodes)
+  const onEdgesChange = useFlowStore((state) => state.onEdgesChange)
+  const onNodesChange = useFlowStore((state) => state.onNodesChange)
+  const onConnect = useFlowStore((state) => state.onConnect)
+  const selectedNode = useFlowStore((state) => state.selectedNode)
 
   const addStartPoint = useCallback(() => {
     const startNode: Node = {
@@ -34,13 +46,13 @@ export default function Flow() {
       data: {
         id: `entry-${Date.now()}`,
       },
-    };
+    }
 
-    setNodes([...nodes, startNode]);
-  }, [nodes, setNodes]);
+    setNodes([...nodes, startNode])
+  }, [nodes, setNodes])
 
   const applyLayout = useCallback(
-    async (layoutOptions) => {
+    async (layoutOptions: any) => {
       const graph = {
         id: 'root',
         layoutOptions: layoutOptions,
@@ -54,31 +66,35 @@ export default function Flow() {
           sources: [edge.source],
           targets: [edge.target],
         })),
-      };
+      }
 
-      const result = await elk.layout(graph);
+      const result = await elk.layout(graph)
 
-      const updatedNodes = nodes.map((node) => {
-        const layoutNode = result.children?.find((n) => n.id === node.id);
+      const updatedNodes: Node[] = nodes.map((node) => {
+        const layoutNode = result.children?.find((n) => n.id === node.id)
         return layoutNode
           ? {
               ...node,
-              position: { x: layoutNode.x, y: layoutNode.y },
+              position: { x: layoutNode.x!, y: layoutNode.y! },
               positionAbsolute: { x: layoutNode.x, y: layoutNode.y },
             }
-          : { ...node }; // Ensure immutability
-      });
+          : { ...node } // Ensure immutability
+      })
 
-      setNodes([...updatedNodes]); // Create a new array to update state immutably
+      setNodes([...updatedNodes]) // Create a new array to update state immutably
     },
     [nodes, edges, setNodes]
-  );
+  )
+
+  console.log({ nodes, edges })
 
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      defaultEdgeOptions={defaultEdgeOptions}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
@@ -128,30 +144,39 @@ export default function Flow() {
         </div>
       </Panel>
       <Panel position="top-right">
-        <button
-          onClick={() =>
-            applyLayout({
-              'elk.algorithm': 'layered',
-              'elk.direction': 'DOWN',
-            })
-          }
-        >
-          Vertical Layout
-        </button>
-        <button
-          onClick={() =>
-            applyLayout({
-              'elk.algorithm': 'layered',
-              'elk.direction': 'RIGHT',
-            })
-          }
-        >
-          Horizontal Layout
-        </button>
+        <div className="flex gap-2">
+          <Button
+            size={'sm'}
+            variant={'outline'}
+            onClick={() =>
+              applyLayout({
+                'elk.algorithm': 'layered',
+                'elk.direction': 'DOWN',
+              })
+            }
+          >
+            Vertical Layout
+          </Button>
+          <Button
+            size={'sm'}
+            variant={'outline'}
+            onClick={() =>
+              applyLayout({
+                'elk.algorithm': 'layered',
+                'elk.direction': 'RIGHT',
+              })
+            }
+          >
+            Horizontal Layout
+          </Button>
+        </div>
       </Panel>
-      <Panel position="top-right" className="w-fit">
-        {/* <FeaturePanel /> */}
-      </Panel>
+
+      {selectedNode && (
+        <Panel position="top-right" className="w-fit">
+          <FeaturePanel />
+        </Panel>
+      )}
     </ReactFlow>
-  );
+  )
 }

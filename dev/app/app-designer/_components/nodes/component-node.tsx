@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Handle, Position } from '@xyflow/react'
+import { Handle, NodeProps, Position } from '@xyflow/react'
 import { Code2, CurlyBraces, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
@@ -12,23 +12,10 @@ import {
   CommandGroup,
   CommandItem,
 } from '@/components/ui/command'
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import { useFlowStore } from '@/store/use-store'
-import { commandItems } from './entry-node'
 
-export interface ComponentNodeData extends Record<string, unknown> {
-  id: string
-  featureName: string
-  featureIcon: ReactNode
-  targetPosition: 'top' | 'bottom' | 'right' | 'left' | ''
-  component: {
-    module: ForeignObj
-    category: ForeignObj
-    type: ForeignObj
-  }
-}
-
-interface ComponentNodeProps {
+interface ComponentNodeProps extends NodeProps {
   data: ComponentNodeData
 }
 
@@ -39,7 +26,12 @@ const positioning = {
   left: Position.Left,
 }
 
-export default function ComponentNode({ data }: ComponentNodeProps) {
+export default function ComponentNode(props: ComponentNodeProps) {
+  const { data } = props
+
+  const setSelectedNode = useFlowStore((state) => state.setSelectedNode)
+  const deleteNode = useFlowStore((state) => state.deleteFeatureNode)
+
   const sourceHandleKeys = Object.keys(positioning).filter((p) => p !== data.targetPosition)
 
   return (
@@ -49,32 +41,44 @@ export default function ComponentNode({ data }: ComponentNodeProps) {
         position={data.targetPosition ? positioning[data.targetPosition] : Position.Left}
         id={`${data.id}-${data.targetPosition}`}
       />
-      {sourceHandleKeys.map((p: string) => {
-        return (
-          <AddNodeHandle
-            key={p}
-            data={{
-              handlePosition: positioning[p as keyof typeof positioning],
-              id: data.id,
-              isSource: true,
-              position: p as keyof typeof positioning,
-            }}
-          />
-        )
-      })}
+      {data.featureName &&
+        sourceHandleKeys.map((p: string) => {
+          return (
+            <AddNodeHandle
+              key={p}
+              data={{
+                handlePosition: positioning[p as keyof typeof positioning],
+                id: data.id,
+                isSource: true,
+                position: p as keyof typeof positioning,
+              }}
+            />
+          )
+        })}
 
       <div className="flex flex-col gap-1 py-2 px-4 rounded-md border bg-muted text-sm w-72 shrink-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            {data.featureIcon} <p className="pl-3 border-l border-foreground">{data.featureName}</p>
+            {data.featureIcon}
+            <p className="pl-3 border-l border-foreground">{data.component.title}</p>
           </div>
 
-          <div className="flex">
-            <Button size={'icon'} variant={'ghost'}>
+          <div className="flex gap-1">
+            <Button
+              size={'icon'}
+              variant={'ghost'}
+              className="hover:cursor-pointer hover:border hover:bg-background"
+              onClick={() => setSelectedNode(data)}
+            >
               <Pencil className="w-4 h-4" />
             </Button>
-            <Button size={'icon'} variant={'ghost'}>
-              <Trash2 className="w-4 h-4 text-destructive" />
+            <Button
+              size={'icon'}
+              variant={'ghost'}
+              className="hover:cursor-pointer hover:border hover:bg-destructive text-destructive hover:text-white"
+              onClick={() => deleteNode(props.id)}
+            >
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -129,7 +133,11 @@ interface AddNodeProps {
 }
 
 function AddNodeHandle({ data: { id, position, handlePosition, isSource } }: AddNodeProps) {
-  const { addFeatureNode } = useFlowStore()
+  const group = useFlowStore((state) => state.baseComponentGroup)
+  const loading = useFlowStore((state) => state.baseComponentsLoading)
+  const error = useFlowStore((state) => state.baseComponentsError)
+  const message = useFlowStore((state) => state.baseComponentsMessage)
+  const addFeatureNode = useFlowStore((state) => state.addFeatureNode)
   const [open, setOpen] = useState(false)
 
   const handleCommandSelect = (command: string) => {
@@ -163,7 +171,7 @@ function AddNodeHandle({ data: { id, position, handlePosition, isSource } }: Add
           <CommandInput placeholder="Type a command..." />
           <CommandList>
             <CommandEmpty>No commands found.</CommandEmpty>
-            {commandItems.map((com) => (
+            {group.map((com) => (
               <CommandGroup heading={com.label} key={com.id}>
                 {com.items.map((i) => (
                   <CommandItem key={i.id} onSelect={() => handleCommandSelect(i.id)}>

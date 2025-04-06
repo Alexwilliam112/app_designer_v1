@@ -6,11 +6,14 @@ import { useCallback } from 'react'
 import EntryNode from './nodes/entry-node'
 import ComponentNode from './nodes/component-node'
 import { useFlowStore } from '@/store/use-store'
+import FeaturePanel from './feature-panel'
 
 const nodeTypes = {
   entryPoint: EntryNode,
   component: ComponentNode,
 }
+
+const proOptions = { hideAttribution: true }
 
 export default function Flow() {
   const nodes = useFlowStore((state) => state.nodes)
@@ -25,7 +28,7 @@ export default function Flow() {
       // Changed from NodeChange to Node
       id: `entry-${Date.now()}`,
       type: 'entryPoint',
-      position: { x: 100, y: 100 + nodes.length * 50 },
+      position: { x: 0, y: 0 + nodes.length * 50 },
       data: {
         id: `entry-${Date.now()}`,
       },
@@ -42,6 +45,7 @@ export default function Flow() {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
+      proOptions={proOptions}
       fitView
     >
       <Background gap={60} variant={BackgroundVariant.Dots} />
@@ -85,6 +89,9 @@ export default function Flow() {
             <p>Start Point</p>
           </div>
         </div>
+      </Panel>
+      <Panel position="top-right" className="w-fit">
+        <FeaturePanel />
       </Panel>
     </ReactFlow>
   )

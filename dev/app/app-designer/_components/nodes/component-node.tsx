@@ -23,17 +23,44 @@ export interface ComponentNodeData extends Record<string, unknown> {
   module: string
   category: string
   type: string
+  targetPosition: 'top' | 'bottom' | 'right' | 'left' | ''
 }
 
 interface ComponentNodeProps {
   data: ComponentNodeData
 }
 
+const positioning = {
+  top: Position.Top,
+  bottom: Position.Bottom,
+  right: Position.Right,
+  left: Position.Left,
+}
+
 export default function ComponentNode({ data }: ComponentNodeProps) {
+  const sourceHandleKeys = Object.keys(positioning).filter((p) => p !== data.targetPosition)
+
   return (
     <>
-      <Handle type={'target'} position={Position.Left} />
-      <Handle type={'source'} position={Position.Right} />
+      <Handle
+        type={'target'}
+        position={data.targetPosition ? positioning[data.targetPosition] : Position.Left}
+        id={`${data.id}-${data.targetPosition}`}
+      />
+      {sourceHandleKeys.map((p: string) => {
+        return (
+          <AddNodeHandle
+            key={p}
+            data={{
+              handlePosition: positioning[p as keyof typeof positioning],
+              id: data.id,
+              isSource: true,
+              position: p as keyof typeof positioning,
+            }}
+          />
+        )
+      })}
+
       <div className="flex flex-col gap-1 py-2 px-4 rounded-md border bg-muted text-sm w-72 shrink-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -85,7 +112,6 @@ export default function ComponentNode({ data }: ComponentNodeProps) {
             </tr>
           </tbody>
         </table>
-        <AddNode data={{ id: data.id }} />
       </div>
     </>
   )
@@ -94,29 +120,43 @@ export default function ComponentNode({ data }: ComponentNodeProps) {
 interface AddNodeProps {
   data: {
     id: string
+    position: 'top' | 'bottom' | 'left' | 'right'
+    handlePosition: Position
+    isSource: boolean
   }
 }
 
-function AddNode({ data: { id } }: AddNodeProps) {
-  const { handleEntryCommandSelect } = useFlowStore()
+function AddNodeHandle({ data: { id, position, handlePosition, isSource } }: AddNodeProps) {
+  const { addFeatureNode } = useFlowStore()
   const [open, setOpen] = useState(false)
 
   const handleCommandSelect = (command: string) => {
-    handleEntryCommandSelect(command, id)
+    addFeatureNode(command, id, { sourceId: `${id}-${position}` })
     setOpen(false)
   }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div>
-          <button className="absolute right-0 -mr-2 top-[46%] bg-foreground text-background rounded-full p-[0.125rem] w-fit h-auto aspect-square hover:cursor-pointer hover:bg-foreground/90">
-            <Plus className="w-3 h-3" />
-          </button>
-          <Handle type="source" position={Position.Right} />
-        </div>
+        <Handle
+          id={`${id}-${position}`}
+          type={isSource ? 'source' : 'target'}
+          position={handlePosition}
+          className="!bg-foreground !border-none !p-0 !m-0"
+          style={{
+            width: '1rem',
+            height: '1rem',
+            borderRadius: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <Plus size={'0.75rem'} className="text-white" />
+        </Handle>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="center" side="right">
+      <PopoverContent className="mx-8 w-64 p-0" align="center" side="right">
         <Command>
           <CommandInput placeholder="Type a command..." />
           <CommandList>

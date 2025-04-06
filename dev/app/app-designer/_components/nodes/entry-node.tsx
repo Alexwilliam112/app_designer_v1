@@ -136,14 +136,18 @@ export const commandItems = [
 ]
 
 export default function EntryNode({ data: { id } }: EntryNodeProps) {
-  const { handleEntryCommandSelect } = useFlowStore()
+  const edges = useFlowStore((state) => state.edges)
+
+  const { addFeatureNode: handleEntryCommandSelect } = useFlowStore()
   const [open, setOpen] = useState(false)
 
   const handleCommandSelect = (command: string) => {
     console.log(command)
-    handleEntryCommandSelect(command, id)
+    handleEntryCommandSelect(command, id, {})
     setOpen(false)
   }
+
+  const isSource = edges.find((e) => e.source === id) !== undefined
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -156,10 +160,10 @@ export default function EntryNode({ data: { id } }: EntryNodeProps) {
             <Play />
             <p>Start</p>
           </Button>
-          <Handle type="source" position={Position.Right} />
+          <Handle type="source" style={{ opacity: isSource ? 100 : 0 }} position={Position.Right} />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="center" side="right">
+      <PopoverContent className="w-64 p-0 mx-4" align="center" side="right">
         <Command>
           <CommandInput placeholder="Type a command..." />
           <CommandList>

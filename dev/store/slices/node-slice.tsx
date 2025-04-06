@@ -20,7 +20,11 @@ export interface NodeSlice {
   onConnect: OnConnect
   setNodes: (nodes: Node[]) => void
   setEdges: (edges: Edge[]) => void
-  handleEntryCommandSelect(id: string, entryId: string): void
+  addFeatureNode(
+    featureId: string,
+    entryId: string,
+    { sourceId, targetId }: { sourceId?: string; targetId?: string }
+  ): void
 }
 
 export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set, get) => ({
@@ -49,7 +53,7 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
     set({ edges })
   },
 
-  handleEntryCommandSelect(id: string, entryId: string) {
+  addFeatureNode(id: string, entryId: string, { sourceId }) {
     const { nodes, edges, setNodes, setEdges } = get()
 
     const ids = id.split('/')
@@ -67,11 +71,52 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       return
     }
 
-    const entryNode = nodes.find((n) => n.id === entryId)
+    const sourceNode = nodes.find((n) => n.id === entryId)
 
-    if (!entryNode) {
+    if (!sourceNode) {
       console.error(`Entry node with ID ${entryId} not found`)
       return
+    }
+
+    const sourcePosition = sourceId ? sourceId.split('-')[sourceId.split('-').length - 1] : 'right'
+    const targetPosition =
+      sourcePosition === 'top'
+        ? 'bottom'
+        : sourcePosition === 'bottom'
+        ? 'top'
+        : sourcePosition === 'right'
+        ? 'left'
+        : sourcePosition === 'left'
+        ? 'right'
+        : ''
+
+    function calculatePosition() {
+      if (!sourceNode) {
+        console.error(`Entry node with ID ${entryId} not found`)
+        return { x: 0, y: 0 }
+      }
+
+      const sourceWidth = sourceNode.measured?.width || 0
+      const sourceHeight = sourceNode.measured?.height || 0
+      const sourceX = sourceNode.position.x
+      const sourceY = sourceNode.position.y
+
+      switch (sourcePosition) {
+        case 'top':
+          return { x: sourceX, y: sourceY - sourceHeight - 100 }
+
+        case 'bottom':
+          return { x: sourceX, y: sourceY + sourceHeight + 100 }
+
+        case 'left':
+          return { x: sourceX - sourceWidth - 100, y: sourceY }
+
+        case 'right':
+          return { x: sourceX + sourceWidth + 100, y: sourceY }
+
+        default:
+          return { x: sourceX + sourceWidth + 100, y: sourceY }
+      }
     }
 
     const data: ComponentNodeData = {
@@ -81,14 +126,15 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
       module: group?.label || '',
       category: '',
       type: '',
+      targetPosition,
     }
 
-    const { position } = entryNode
+    const position = calculatePosition()
 
     const newNode = {
       id: `component-${Date.now()}`, // Using timestamp to ensure unique IDs
       type: 'component',
-      position: { x: position.x + 100, y: position.y },
+      position,
       data,
     }
 
@@ -102,8 +148,8 @@ export const createNodeSlice: StateCreator<NodeSlice, [], [], NodeSlice> = (set,
         id: `edge-${Date.now()}`,
         source: entryId,
         target: newNode.id,
-        sourceHandle: null,
-        targetHandle: null,
+        sourceHandle: sourceId || null,
+        targetHandle: `${newNode.id}-${targetPosition}`,
       },
     ])
   },

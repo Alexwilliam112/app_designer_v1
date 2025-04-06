@@ -2,7 +2,18 @@
 
 import { Button } from '@/components/ui/button'
 import { Handle, NodeProps, Position } from '@xyflow/react'
-import { Code2, CurlyBraces, Pencil, Plus, Trash2 } from 'lucide-react'
+import {
+  Code2,
+  CurlyBraces,
+  Monitor,
+  MonitorCog,
+  Pencil,
+  PieChart,
+  Plus,
+  Trash2,
+  Webhook,
+  Zap,
+} from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
   Command,
@@ -33,6 +44,18 @@ export default function ComponentNode(props: ComponentNodeProps) {
   const deleteNode = useFlowStore((state) => state.deleteFeatureNode)
 
   const sourceHandleKeys = Object.keys(positioning).filter((p) => p !== data.targetPosition)
+  const featureIcon =
+    data.component.category === 'APP BUILDER' ? (
+      <Monitor />
+    ) : data.type_of_custom === 'LOWCODE' ? (
+      <MonitorCog />
+    ) : data.type_of_custom === 'WORKFLOW' ? (
+      <Webhook />
+    ) : data.type_of_custom === 'INTEGRATION' ? (
+      <Zap />
+    ) : data.type_of_custom === 'INSIGHT' ? (
+      <PieChart />
+    ) : undefined
 
   return (
     <>
@@ -59,7 +82,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
       <div className="flex flex-col gap-1 py-2 px-4 rounded-md border bg-muted text-sm w-72 shrink-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            {data.featureIcon}
+            {featureIcon}
             <p className="pl-3 border-l border-foreground">{data.component.title}</p>
           </div>
 

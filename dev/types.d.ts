@@ -12,7 +12,6 @@ declare global {
     interface ComponentNodeData extends Record<string, unknown> {
         id: string
         menuName: string
-        featureIcon: ReactNode
         targetPosition: 'top' | 'bottom' | 'right' | 'left' | ''
         component: Feature
     }

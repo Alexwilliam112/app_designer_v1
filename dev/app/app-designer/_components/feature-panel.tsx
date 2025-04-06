@@ -51,7 +51,7 @@ export default function FeaturePanel() {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof featureSchema>) => {
+  const onSubmit = async (values: z.infer<typeof featureSchema>) => {
     if (!selectedNode) {
       console.error('Node not found')
       return
@@ -63,7 +63,9 @@ export default function FeaturePanel() {
     updated.component.title = values.name
     updated.component.description = values.description
 
-    save(updated)
+    await save(updated)
+
+    setSelectedNode(undefined)
   }
 
   return (

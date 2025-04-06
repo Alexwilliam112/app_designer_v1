@@ -50,7 +50,7 @@ const flowApi = {
 
         if (error) throw new Error(message)
 
-        return data as BaseComponent[]
+        return data as { nodes: Node[], edges: Edge[] }
     },
 }
 

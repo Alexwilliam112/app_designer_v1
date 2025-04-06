@@ -11,19 +11,26 @@ export default function AppDesignerPage() {
   const id_estimation = searchParams.get('id_estimation') || ''
 
   const fetchComponents = useFlowStore((state) => state.fetchBaseComponents)
-  const fetchCallback = useCallback(async () => {
+  const fetchNodes = useFlowStore((state) => state.fetchNodes)
+
+  const fetchCompsCallback = useCallback(async () => {
     await fetchComponents()
   }, [])
 
+  const fetchNodesCallback = useCallback(async () => {
+    await fetchNodes(id_estimation)
+  }, [id_estimation])
+
   useEffect(() => {
-    fetchCallback()
+    fetchCompsCallback()
   }, [])
 
   useEffect(() => {
     if (id_estimation) {
       setIdEstimation(id_estimation)
+      fetchNodesCallback()
     }
-  }, [id_estimation])
+  }, [id_estimation, fetchNodesCallback])
 
   return <Flow />
 }

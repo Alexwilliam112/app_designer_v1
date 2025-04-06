@@ -11,15 +11,24 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
 import { StateCreator } from 'zustand'
 import { PanelSlice } from './panel-slice'
 import { DataSlice } from './data-slice'
+import flowApi from '@/services/flow-api'
 
 export interface NodeSlice {
+  nodesLoading: boolean
+  nodesError: boolean
+  nodesMessage: string
   nodes: Node[]
   edges: Edge[]
+
   onNodesChange: OnNodesChange<Node>
   onEdgesChange: OnEdgesChange
   onConnect: OnConnect
+
   setNodes: (nodes: Node[]) => void
   setEdges: (edges: Edge[]) => void
+
+  fetchNodes: (id_estimation: string) => Promise<void>
+
   addFeatureNode(
     featureId: string,
     entryId: string,
@@ -34,6 +43,9 @@ export const createNodeSlice: StateCreator<
   [],
   NodeSlice
 > = (set, get) => ({
+  nodesLoading: true,
+  nodesError: false,
+  nodesMessage: '',
   nodes: [],
   edges: [],
 
@@ -71,6 +83,18 @@ export const createNodeSlice: StateCreator<
   },
   setEdges: (edges) => {
     set({ edges })
+  },
+
+  async fetchNodes(id_estimation) {
+    try {
+      const { nodes, edges } = await flowApi.getFlow({ id_estimation })
+
+      set({ nodes, edges })
+    } catch (error: unknown) {
+      set({ nodesError: true, nodesMessage: String(error) })
+    } finally {
+      set({ nodesLoading: false })
+    }
   },
 
   addFeatureNode(id: string, entryId: string, { sourceId }) {

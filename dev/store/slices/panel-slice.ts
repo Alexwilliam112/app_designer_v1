@@ -18,16 +18,22 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice, [], [], Pane
     set({ selectedNode: selected })
   },
   async updateComponent(component) {
-    const { nodes } = get()
+    try {
+      const { nodes } = get()
 
-    const updated = nodes.slice()
-    const updateIndex = updated.findIndex(n => n.id === component.id)
+      const updated = nodes.slice()
+      const updateIndex = updated.findIndex(n => n.id === component.id)
 
-    if (updateIndex < 0) {
-      console.error(`Error updating node: Nodes with id ${component.id} not found`)
-      return
+      if (updateIndex < 0) {
+        console.error(`Error updating node: Nodes with id ${component.id} not found`)
+        return
+      }
+
+      set({ nodes: updated })
+    } catch (error) {
+
+    } finally {
+
     }
-
-    set({ nodes: updated })
   },
 })

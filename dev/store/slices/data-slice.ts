@@ -4,7 +4,7 @@ import { StateCreator } from "zustand"
 import { NodeSlice } from "./node-slice"
 import { PanelSlice } from "./panel-slice"
 import flowApi from "@/services/flow-api"
-import { unknown } from "zod"
+import { string, unknown } from "zod"
 import { Monitor, MonitorCog, PieChart, Webhook, Zap } from "lucide-react"
 
 interface FeatureOption {
@@ -15,6 +15,8 @@ interface FeatureOption {
 }
 
 export interface DataSlice {
+    id_estimation: string
+
     baseComponentGroup: ComponentGroup[]
     baseComponentsLoading: boolean
     baseComponentsError: boolean
@@ -22,17 +24,25 @@ export interface DataSlice {
 
     featureOptions: Record<string, FeatureOption>
 
+    setIdEstimation(id: string): void
+
     fetchBaseComponents(): Promise<void>
     fetchFeatures(id_component: string): Promise<void>
 }
 
 export const createDataSlice: StateCreator<DataSlice & NodeSlice & PanelSlice, [], [], DataSlice> = (set, get) => ({
+    id_estimation: '',
+
     baseComponentGroup: [],
     baseComponentsLoading: true,
     baseComponentsError: false,
     baseComponentsMessage: "",
 
     featureOptions: {},
+
+    setIdEstimation(id) {
+        set({ id_estimation: id })
+    },
 
     async fetchBaseComponents() {
         try {

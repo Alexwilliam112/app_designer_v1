@@ -1,11 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import { Background, BackgroundVariant, Panel, ReactFlow } from '@xyflow/react'
+import { Background, BackgroundVariant, Node, Panel, ReactFlow } from '@xyflow/react'
 import { ChartPie, Database, Monitor, MonitorCog, Play, Webhook, Zap } from 'lucide-react'
-import { useCallback, useEffect } from 'react'
-import EntryNode, { commandItems } from './nodes/entry-node'
-import ComponentNode, { ComponentNodeData } from './nodes/component-node'
+import { useCallback } from 'react'
+import EntryNode from './nodes/entry-node'
+import ComponentNode from './nodes/component-node'
 import { useFlowStore } from '@/store/use-store'
 
 const nodeTypes = {
@@ -14,73 +13,37 @@ const nodeTypes = {
 }
 
 export default function Flow() {
-  const { nodes, edges, setNodes, setEdges } = useFlowStore()
-
-  const handleEntryCommandSelect = (id: string, entryId: string) => {
-    const ids = id.split('/')
-    const group = commandItems.find((g) => g.id === ids[0])
-    const item = group?.items.find((i) => i.id === id) // Fixed: Changed g.id to i.id to match the full path
-
-    // Find the current node directly from state
-    console.log({ nodes })
-    // const entryNode = nodes.find((n) => n.id === entryId)
-
-    // if (!entryNode) {
-    //   console.error(`Entry node with ID ${entryId} not found`)
-    //   return
-    // }
-
-    const data: ComponentNodeData = {
-      featureName: item?.label || '',
-      featureIcon: item ? <item.icon /> : undefined,
-      module: group?.label || '',
-      category: '',
-      type: '',
-    }
-
-    // const { position } = entryNode
-
-    const newNode = {
-      id: `component-${Date.now()}`, // Using timestamp to ensure unique IDs
-      type: 'component',
-      position: { x: 200, y: 100 },
-      data,
-    }
-
-    setNodes([...nodes, newNode])
-
-    // setEdges([
-    //   ...edges,
-    //   {
-    //     id: `edge-${Date.now()}`,
-    //     source: entryId,
-    //     target: newNode.id,
-    //     sourceHandle: null,
-    //     targetHandle: null,
-    //   },
-    // ])
-  }
+  const nodes = useFlowStore((state) => state.nodes)
+  const edges = useFlowStore((state) => state.edges)
+  const setNodes = useFlowStore((state) => state.setNodes)
+  const onEdgesChange = useFlowStore((state) => state.onEdgesChange)
+  const onNodesChange = useFlowStore((state) => state.onNodesChange)
+  const onConnect = useFlowStore((state) => state.onConnect)
 
   const addStartPoint = useCallback(() => {
-    const startNode = {
-      id: `entry-${Date.now()}`, // Using timestamp for unique IDs
+    const startNode: Node = {
+      // Changed from NodeChange to Node
+      id: `entry-${Date.now()}`,
       type: 'entryPoint',
-      position: { x: 100, y: 100 + nodes.length * 50 }, // More predictable positioning
+      position: { x: 100, y: 100 + nodes.length * 50 },
       data: {
         id: `entry-${Date.now()}`,
-        onCommandSelect: handleEntryCommandSelect,
       },
     }
 
+    // Directly add the node to the store
     setNodes([...nodes, startNode])
-  }, [handleEntryCommandSelect, setNodes])
-
-  useEffect(() => {
-    console.log({ nodes })
-  }, [nodes])
-
+  }, [nodes, setNodes]) // Added dependencies
   return (
-    <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={nodeTypes}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      fitView
+    >
       <Background gap={60} variant={BackgroundVariant.Dots} />
       <Panel position="top-left">
         <div className="relative flex p-1 gap-3 bg-muted border rounded-md uppercase text-[0.4rem]">

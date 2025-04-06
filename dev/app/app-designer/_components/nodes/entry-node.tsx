@@ -13,6 +13,7 @@ import {
   CommandItem,
 } from '@/components/ui/command'
 import { Handle, Position } from '@xyflow/react'
+import { useFlowStore } from '@/store/use-store'
 
 interface EntryNodeProps {
   data: {
@@ -134,14 +135,13 @@ export const commandItems = [
   },
 ]
 
-export default function EntryNode({ data: { onCommandSelect, id } }: EntryNodeProps) {
+export default function EntryNode({ data: { id } }: EntryNodeProps) {
+  const { handleEntryCommandSelect } = useFlowStore()
   const [open, setOpen] = useState(false)
 
   const handleCommandSelect = (command: string) => {
     console.log(command)
-    if (onCommandSelect) {
-      onCommandSelect(command, id)
-    }
+    handleEntryCommandSelect(command, id)
     setOpen(false)
   }
 

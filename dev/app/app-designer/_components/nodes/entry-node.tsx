@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Monitor, MonitorCog, Network, PieChart, Play, Webhook, Zap } from 'lucide-react'
+import { Play } from 'lucide-react'
 import { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
@@ -25,8 +25,6 @@ interface EntryNodeProps {
 export default function EntryNode({ data: { id } }: EntryNodeProps) {
   const group = useFlowStore((state) => state.baseComponentGroup)
   const loading = useFlowStore((state) => state.baseComponentsLoading)
-  const error = useFlowStore((state) => state.baseComponentsError)
-  const message = useFlowStore((state) => state.baseComponentsMessage)
 
   const edges = useFlowStore((state) => state.edges)
   const addFeatureNode = useFlowStore((state) => state.addFeatureNode)

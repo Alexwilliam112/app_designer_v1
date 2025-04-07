@@ -13,7 +13,7 @@ const flowApi = {
 
         if (error) throw new Error(message)
 
-        return data as { nodes: Node[], edges: Edge[] }
+        return data as { nodes: Node<ComponentNodeData>[], edges: Edge[] }
     },
     async getBaseComponents() {
         const res = await fetch("https://api-oos.jojonomic.com/27407/effort-calculator/v2/base-components")
@@ -34,7 +34,7 @@ const flowApi = {
 
         if (error) throw new Error(message)
 
-        return data as BaseComponent[]
+        return data as ForeignObj[]
     },
     async getModules({ id_estimation }: { id_estimation: string }) {
         const url = new URL("https://api-oos.jojonomic.com/27407/effort-calculator/v2/modules")

@@ -10,6 +10,7 @@ import FeaturePanel from './feature-panel'
 import ELK from 'elkjs/lib/elk.bundled.js'
 import CustomEdge from './edge'
 import { Button } from '@/components/ui/button'
+import UserFlowEdge from './user-flow-edge'
 
 const elk = new ELK()
 
@@ -20,6 +21,7 @@ const nodeTypes = {
 
 const edgeTypes = {
   customEdge: CustomEdge,
+  userFlowEdge: UserFlowEdge,
 }
 
 const defaultEdgeOptions = {
@@ -48,7 +50,7 @@ export default function Flow() {
       },
     }
 
-    setNodes([...nodes, startNode])
+    setNodes([...nodes, startNode as Node<ComponentNodeData>])
   }, [nodes, setNodes])
 
   const applyLayout = useCallback(
@@ -70,7 +72,7 @@ export default function Flow() {
 
       const result = await elk.layout(graph)
 
-      const updatedNodes: Node[] = nodes.map((node) => {
+      const updatedNodes: Node<ComponentNodeData>[] = nodes.map((node) => {
         const layoutNode = result.children?.find((n) => n.id === node.id)
         return layoutNode
           ? {
@@ -85,8 +87,6 @@ export default function Flow() {
     },
     [nodes, edges, setNodes]
   )
-
-  console.log({ nodes, edges })
 
   return (
     <ReactFlow

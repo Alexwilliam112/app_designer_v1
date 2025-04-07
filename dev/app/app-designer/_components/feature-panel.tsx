@@ -11,13 +11,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Search } from '@/components/ui/search'
 import { Textarea } from '@/components/ui/textarea'
+import flowApi from '@/services/flow-api'
 import { useFlowStore } from '@/store/use-store'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Monitor, X } from 'lucide-react'
-import React from 'react'
+import { Monitor, X, MonitorCog, Webhook, Zap, PieChart } from 'lucide-react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -25,21 +25,19 @@ const featureSchema = z.object({
   module: z.string().optional(),
   name: z.string().min(1),
   description: z.string().min(1),
+  data_flows: z.array(z.string()),
+  features: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'You have to select at least one item.',
+  }),
 })
 
-const options = [
-  { label: 'Generate PDF Report', isSelected: true },
-  { label: 'Send email notification', isSelected: true },
-  { label: 'Automate workflow', isSelected: false },
-  { label: 'Auto suggest business logic', isSelected: false },
-  { label: 'Execute custom business logic', isSelected: false },
-]
-
 export default function FeaturePanel() {
+  const [featureOptions, setFeatureOptions] = useState<ForeignObj[]>([])
+
   const nodes = useFlowStore((state) => state.nodes)
+  const selectedNode = useFlowStore((state) => state.selectedNode)
 
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode)
-  const selectedNode = useFlowStore((state) => state.selectedNode)
   const save = useFlowStore((state) => state.updateComponent)
 
   const form = useForm({
@@ -48,25 +46,63 @@ export default function FeaturePanel() {
       module: '',
       name: selectedNode?.component.title || '',
       description: selectedNode?.component.description || '',
+      features: selectedNode?.component.features?.map((d) => d.id) || [],
+      data_flows: [],
     },
   })
 
   const onSubmit = async (values: z.infer<typeof featureSchema>) => {
     if (!selectedNode) {
-      console.error('Node not found')
+      console.error('No selected node available')
       return
     }
 
     const updated = selectedNode
 
+    // Create edges based on data flows
+
     updated.menuName = values.name
     updated.component.title = values.name
     updated.component.description = values.description
+    updated.component.features = featureOptions
+      .slice()
+      .filter((f) => values.features.includes(f.id))
 
     await save(updated)
 
     setSelectedNode(undefined)
   }
+
+  const fetchFeatureCallback = useCallback(async () => {
+    if (!selectedNode) {
+      console.error('No selected node available')
+      return
+    }
+
+    const id_component = selectedNode.component.id_component
+    const data = await flowApi.getFeatures({ id_component })
+
+    setFeatureOptions(data)
+  }, [selectedNode])
+
+  useEffect(() => {
+    if (selectedNode) {
+      fetchFeatureCallback()
+    }
+  }, [fetchFeatureCallback])
+
+  const featureIcon =
+    selectedNode?.component.category === 'APP BUILDER' ? (
+      <Monitor />
+    ) : selectedNode?.component.category === 'LOWCODE' ? (
+      <MonitorCog />
+    ) : selectedNode?.component.category === 'WORKFLOW' ? (
+      <Webhook />
+    ) : selectedNode?.component.category === 'INTEGRATION' ? (
+      <Zap />
+    ) : selectedNode?.component.category === 'INSIGHT' ? (
+      <PieChart />
+    ) : undefined
 
   return (
     <Form {...form}>
@@ -76,9 +112,10 @@ export default function FeaturePanel() {
       >
         <header className="flex justify-between pb-5 border-b border-foreground/30 shrink-0">
           <div className="flex gap-2 items-center">
-            {/* Feature Icon and Name */}
-            <Monitor className="w-6 h-6" />
-            <h1 className="leading-none text-xl font-semibold">Requestor Menu</h1>
+            {featureIcon}
+            <h1 className="leading-none text-xl font-semibold">
+              {selectedNode?.component.category}
+            </h1>
           </div>
 
           <Button
@@ -150,14 +187,44 @@ export default function FeaturePanel() {
           <div className="flex flex-col gap-2 pb-5 border-b border-foreground/30 min-h-0">
             <h2 className="font-semibold text-foreground/80 leading-none">Features</h2>
             <div className="flex flex-col gap-1 overflow-y-auto flex-1 min-h-0">
-              {options.map((op) => (
-                <div key={op.label} className="flex gap-2 items-center">
-                  <Checkbox id={op.label} className="w-7 h-7 bg-background shadow-none" />
-                  <Label className="px-3 py-2 bg-background w-full rounded border">
-                    {op.label}
-                  </Label>
-                </div>
-              ))}
+              <FormField
+                control={form.control}
+                name="features"
+                render={() => (
+                  <FormItem>
+                    {featureOptions.map((item) => (
+                      <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="features"
+                        render={({ field }) => {
+                          return (
+                            <FormItem key={item.id} className="flex gap-2 items-center">
+                              <FormControl>
+                                <Checkbox
+                                  className="w-7 h-7 bg-background shadow-none"
+                                  checked={field.value?.includes(item.id)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, item.id])
+                                      : field.onChange(
+                                          field.value?.filter((value) => value !== item.id)
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="px-3 py-2 bg-background w-full rounded border">
+                                {item.name}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
 
@@ -167,14 +234,47 @@ export default function FeaturePanel() {
               <Search />
             </div>
             <div className="flex flex-col gap-1 overflow-y-auto flex-1 min-h-0">
-              {options.map((op) => (
-                <div key={op.label} className="flex gap-2 items-center">
-                  <Checkbox id={op.label} className="w-7 h-7 bg-background shadow-none" />
-                  <Label className="px-3 py-2 bg-background w-full rounded border">
-                    {op.label}
-                  </Label>
-                </div>
-              ))}
+              <FormField
+                control={form.control}
+                name="data_flows"
+                render={() => (
+                  <FormItem>
+                    {nodes
+                      .slice()
+                      .filter((n) => !n.id.includes('entry') && n.id !== selectedNode?.id)
+                      .map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="data_flows"
+                          render={({ field }) => {
+                            return (
+                              <FormItem key={item.id} className="flex gap-2 items-center">
+                                <FormControl>
+                                  <Checkbox
+                                    className="w-7 h-7 bg-background shadow-none"
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter((value) => value !== item.id)
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="px-3 py-2 bg-background w-full rounded border">
+                                  {item.data.menuName}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
         </div>

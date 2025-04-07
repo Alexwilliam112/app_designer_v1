@@ -23,7 +23,7 @@ import {
   CommandGroup,
   CommandItem,
 } from '@/components/ui/command'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFlowStore } from '@/store/use-store'
 
 interface ComponentNodeProps extends NodeProps {

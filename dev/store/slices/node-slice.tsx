@@ -6,6 +6,7 @@ import {
   type OnNodesChange,
   type OnEdgesChange,
   type OnConnect,
+  NodeChange,
 } from '@xyflow/react'
 import { addEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
 import { StateCreator } from 'zustand'
@@ -17,14 +18,14 @@ export interface NodeSlice {
   nodesLoading: boolean
   nodesError: boolean
   nodesMessage: string
-  nodes: Node[]
+  nodes: Node<ComponentNodeData>[]
   edges: Edge[]
 
   onNodesChange: OnNodesChange<Node>
   onEdgesChange: OnEdgesChange
   onConnect: OnConnect
 
-  setNodes: (nodes: Node[]) => void
+  setNodes: (nodes: Node<ComponentNodeData>[]) => void
   setEdges: (edges: Edge[]) => void
 
   fetchNodes: (id_estimation: string) => Promise<void>
@@ -51,7 +52,7 @@ export const createNodeSlice: StateCreator<
 
   onNodesChange: (changes) => {
     set({
-      nodes: applyNodeChanges(changes, get().nodes),
+      nodes: applyNodeChanges(changes as NodeChange<Node<ComponentNodeData>>[], get().nodes),
     })
   },
   onEdgesChange: (changes) => {
@@ -64,7 +65,7 @@ export const createNodeSlice: StateCreator<
     const newEdge: Edge = {
       ...connection,
       id: `edge-${Date.now()}`,
-      type: 'customEdge', // Set your desired default edge type here
+      type: 'userFlowEdge', // Set your desired default edge type here
       // You can also add other default properties
       animated: false,
       style: { stroke: '#555' },
@@ -163,7 +164,7 @@ export const createNodeSlice: StateCreator<
       }
     }
 
-    function forceLayout(nodes: Node[], newPosition: { x: number; y: number }) {
+    function forceLayout(nodes: Node<ComponentNodeData>[], newPosition: { x: number; y: number }) {
       const gap = 100 // Gap between nodes
       const step = 10 // Step size for circular search
       let A = {
@@ -292,7 +293,6 @@ export const createNodeSlice: StateCreator<
     const data: ComponentNodeData = {
       id: '',
       menuName: '',
-      featureIcon: <item.icon className="w-4 h-4" />,
       targetPosition,
       component: {
         title: '',
@@ -301,7 +301,7 @@ export const createNodeSlice: StateCreator<
         module: initialObj,
         category: group.label,
         type: item.label,
-        data_flows: [],
+        features: [],
       },
     }
 
@@ -321,10 +321,11 @@ export const createNodeSlice: StateCreator<
     setEdges([
       ...edges,
       {
-        id: `edge-${Date.now()}`,
-        type: 'customEdge',
+        id: `userflow-${Date.now()}`,
+        type: 'userFlowEdge',
         source: entryId,
         target: newNode.id,
+        animated: false,
         sourceHandle: sourceId || null,
         targetHandle: `${newNode.id}-${targetPosition}`,
       },
@@ -333,20 +334,29 @@ export const createNodeSlice: StateCreator<
     get().setSelectedNode(data)
   },
   deleteFeatureNode(id: string) {
-    const { nodes, edges } = get()
+    try {
+      const { id_estimation } = get()
+      const { nodes, edges } = get()
 
-    const newNodes = nodes.filter((t) => t.id !== id)
-    set({ nodes: newNodes })
+      const newNodes = nodes.filter((t) => t.id !== id)
+      const newSourceId = edges.find((e) => e.target === id)?.source || nodes[0].id
+      const newEdges = edges.map((e, i) => {
+        if (e.source === id) {
+          e.source = newSourceId
+          e.sourceHandle = null
+        }
 
-    const newSourceId = edges.find((e) => e.target === id)?.source || nodes[0].id
-    const newEdges = edges.map((e, i) => {
-      if (e.source === id) {
-        e.source = newSourceId
-        e.sourceHandle = null
-      }
+        return e
+      })
 
-      return e
-    })
-    set({ edges: newEdges })
+      flowApi
+        .saveFlow({ id_estimation, payload: { nodes: newNodes, edges: newEdges } })
+        .then(() => {
+          set({ nodes: newNodes })
+          set({ edges: newEdges })
+        })
+    } catch (error) {
+      alert('Error deleting node: ' + String(error))
+    }
   },
 })

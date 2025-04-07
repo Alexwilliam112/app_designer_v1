@@ -25,7 +25,7 @@ declare global {
         category: string
         type: string
         module: ModuleId
-        data_flows: Node[]
+        features: ForeignObj[]
     }
 
     interface BaseComponent {

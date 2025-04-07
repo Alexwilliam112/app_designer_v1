@@ -21,7 +21,7 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice & DataSlice, 
   },
   async updateComponent(component) {
     try {
-      const { nodes, edges, id_estimation } = get()
+      const { nodes, edges, id_estimation, setNodes } = get()
 
       const updated = nodes.slice()
       const updateIndex = updated.findIndex(n => n.id === component.id)
@@ -31,9 +31,19 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice & DataSlice, 
         return
       }
 
-      await flowApi.saveFlow({ id_estimation, payload: { nodes: updated, edges } })
+      // Create a new node object with updated data
+      updated[updateIndex] = {
+        ...updated[updateIndex],
+        data: {
+          ...updated[updateIndex].data,
+          ...component
+        }
+      }
 
-      set({ nodes: updated })
+      await flowApi.saveFlow({ id_estimation, payload: { nodes: updated, edges: edges.slice() } })
+
+      // This will properly trigger ReactFlow updates
+      setNodes(updated)
     } catch (error: unknown) {
       alert("Error saving flow:" + String(error))
     }

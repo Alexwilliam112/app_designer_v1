@@ -36,20 +36,25 @@ export default function FeaturePanel() {
   const [featureOptions, setFeatureOptions] = useState<ForeignObj[]>([])
 
   const nodes = useFlowStore((state) => state.nodes)
+  const edges = useFlowStore((state) => state.edges)
   const selectedNode = useFlowStore((state) => state.selectedNode)
+  const setNodes = useFlowStore((state) => state.setNodes)
+  const setEdges = useFlowStore((state) => state.setEdges)
 
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode)
   const save = useFlowStore((state) => state.updateComponent)
 
+  const defaultValues = {
+    module: '',
+    name: selectedNode?.component.title || '',
+    description: selectedNode?.component.description || '',
+    features: selectedNode?.component.features?.map((d) => d.id) || [],
+    data_flows: [],
+  }
+
   const form = useForm({
     resolver: zodResolver(featureSchema),
-    defaultValues: {
-      module: '',
-      name: selectedNode?.component.title || '',
-      description: selectedNode?.component.description || '',
-      features: selectedNode?.component.features?.map((d) => d.id) || [],
-      data_flows: [],
-    },
+    defaultValues,
   })
 
   const onSubmit = async (values: z.infer<typeof featureSchema>) => {
@@ -59,8 +64,6 @@ export default function FeaturePanel() {
     }
 
     const updated = selectedNode
-
-    // Create edges based on data flows
 
     updated.menuName = values.name
     updated.component.title = values.name
@@ -94,6 +97,16 @@ export default function FeaturePanel() {
     }
   }, [fetchFeatureCallback])
 
+  const onClose = () => {
+    if (selectedNode) {
+      if (!selectedNode.menuName || !selectedNode.component.description) {
+        setNodes(nodes.filter((n) => n.id !== selectedNode.id))
+        setEdges(edges.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id))
+        setSelectedNode(undefined)
+      }
+    }
+  }
+
   const featureIcon =
     selectedNode?.component.category === 'APP BUILDER' ? (
       <Monitor />
@@ -126,7 +139,7 @@ export default function FeaturePanel() {
             size={'icon'}
             type="button"
             className="hover:cursor-pointer hover:border"
-            onClick={() => setSelectedNode(undefined)}
+            onClick={onClose}
           >
             <X />
           </Button>

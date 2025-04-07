@@ -47,13 +47,13 @@ export default function ComponentNode(props: ComponentNodeProps) {
   const featureIcon =
     data.component.category === 'APP BUILDER' ? (
       <Monitor />
-    ) : data.type_of_custom === 'LOWCODE' ? (
+    ) : data.component.category === 'LOWCODE' ? (
       <MonitorCog />
-    ) : data.type_of_custom === 'WORKFLOW' ? (
+    ) : data.component.category === 'WORKFLOW' ? (
       <Webhook />
-    ) : data.type_of_custom === 'INTEGRATION' ? (
+    ) : data.component.category === 'INTEGRATION' ? (
       <Zap />
-    ) : data.type_of_custom === 'INSIGHT' ? (
+    ) : data.component.category === 'INSIGHT' ? (
       <PieChart />
     ) : undefined
 

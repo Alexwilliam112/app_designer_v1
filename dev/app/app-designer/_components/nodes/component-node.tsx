@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Handle, NodeProps, Position } from '@xyflow/react'
+import { Handle, NodeProps, Position, useUpdateNodeInternals } from '@xyflow/react'
 import {
   Code2,
   CurlyBraces,

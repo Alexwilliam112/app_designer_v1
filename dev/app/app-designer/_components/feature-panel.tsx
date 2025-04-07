@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea'
 import flowApi from '@/services/flow-api'
 import { useFlowStore } from '@/store/use-store'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useUpdateNodeInternals } from '@xyflow/react'
 import { Monitor, X, MonitorCog, Webhook, Zap, PieChart } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -26,12 +27,12 @@ const featureSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   data_flows: z.array(z.string()),
-  features: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one item.',
-  }),
+  features: z.array(z.string()),
 })
 
 export default function FeaturePanel() {
+  const updateNodeInternals = useUpdateNodeInternals()
+
   const [featureOptions, setFeatureOptions] = useState<ForeignObj[]>([])
 
   const nodes = useFlowStore((state) => state.nodes)
@@ -71,6 +72,8 @@ export default function FeaturePanel() {
     await save(updated)
 
     setSelectedNode(undefined)
+
+    updateNodeInternals(updated.id)
   }
 
   const fetchFeatureCallback = useCallback(async () => {
@@ -192,35 +195,36 @@ export default function FeaturePanel() {
                 name="features"
                 render={() => (
                   <FormItem>
-                    {featureOptions.map((item) => (
-                      <FormField
-                        key={item.id}
-                        control={form.control}
-                        name="features"
-                        render={({ field }) => {
-                          return (
-                            <FormItem key={item.id} className="flex gap-2 items-center">
-                              <FormControl>
-                                <Checkbox
-                                  className="w-7 h-7 bg-background shadow-none"
-                                  checked={field.value?.includes(item.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([...field.value, item.id])
-                                      : field.onChange(
-                                          field.value?.filter((value) => value !== item.id)
-                                        )
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="px-3 py-2 bg-background w-full rounded border">
-                                {item.name}
-                              </FormLabel>
-                            </FormItem>
-                          )
-                        }}
-                      />
-                    ))}
+                    {featureOptions &&
+                      featureOptions.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="features"
+                          render={({ field }) => {
+                            return (
+                              <FormItem key={item.id} className="flex gap-2 items-center">
+                                <FormControl>
+                                  <Checkbox
+                                    className="w-7 h-7 bg-background shadow-none"
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter((value) => value !== item.id)
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="px-3 py-2 bg-background w-full rounded border">
+                                  {item.name}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
                     <FormMessage />
                   </FormItem>
                 )}

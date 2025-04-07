@@ -333,21 +333,24 @@ export const createNodeSlice: StateCreator<
 
     get().setSelectedNode(data)
   },
-  deleteFeatureNode(id: string) {
+  deleteFeatureNode(deletedNodeId: string) {
     try {
       const { id_estimation } = get()
       const { nodes, edges } = get()
 
-      const newNodes = nodes.filter((t) => t.id !== id)
-      const newSourceId = edges.find((e) => e.target === id)?.source || nodes[0].id
-      const newEdges = edges.map((e, i) => {
-        if (e.source === id) {
-          e.source = newSourceId
-          e.sourceHandle = null
-        }
+      const newNodes = nodes.filter((t) => t.id !== deletedNodeId)
+      const newSource = edges.find((e) => e.target === deletedNodeId)
 
-        return e
-      })
+      const newEdges: Edge[] = edges
+        .map((e) => {
+          if (e.source === deletedNodeId) {
+            e.source = newSource?.source || nodes[0].id
+            e.sourceHandle = newSource?.sourceHandle || null
+          }
+
+          return e
+        })
+        .filter((e) => e.target !== deletedNodeId)
 
       flowApi
         .saveFlow({ id_estimation, payload: { nodes: newNodes, edges: newEdges } })

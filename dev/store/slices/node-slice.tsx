@@ -301,6 +301,7 @@ export const createNodeSlice: StateCreator<
         module: initialObj,
         category: group.label,
         type: item.label,
+        data_flows: [],
       },
     }
 

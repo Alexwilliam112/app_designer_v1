@@ -1,3 +1,5 @@
+import { Node } from "@xyflow/react"
+
 declare global {
     interface ForeignObj {
         id: string
@@ -20,9 +22,10 @@ declare global {
         id_component: string
         title: string
         description: string
-        module: ModuleId
         category: string
         type: string
+        module: ModuleId
+        data_flows: Node[]
     }
 
     interface BaseComponent {

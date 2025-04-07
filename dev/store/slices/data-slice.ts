@@ -22,6 +22,11 @@ export interface DataSlice {
     baseComponentsError: boolean
     baseComponentsMessage: string
 
+    modulesData: ModuleId[] | []
+    modulesLoading: boolean
+    modulesError: boolean
+    modulesMessage: string
+
     featureOptions: Record<string, FeatureOption>
 
     setIdEstimation(id: string): void
@@ -37,6 +42,11 @@ export const createDataSlice: StateCreator<DataSlice & NodeSlice & PanelSlice, [
     baseComponentsLoading: true,
     baseComponentsError: false,
     baseComponentsMessage: "",
+
+    modulesData: [],
+    modulesLoading: true,
+    modulesError: false,
+    modulesMessage: '',
 
     featureOptions: {},
 
@@ -102,6 +112,17 @@ export const createDataSlice: StateCreator<DataSlice & NodeSlice & PanelSlice, [
             set({ baseComponentsError: true, baseComponentsMessage: String(unknown) })
         } finally {
             set({ baseComponentsLoading: false })
+        }
+    },
+    async fetchModules() {
+        try {
+            const { id_estimation } = get()
+            const modulesData = await flowApi.getModules({ id_estimation })
+            set({ modulesData })
+        } catch (error: unknown) {
+            set({ modulesError: true, modulesMessage: String(error) })
+        } finally {
+            set({ modulesLoading: false })
         }
     },
     async fetchFeatures(id_component) {

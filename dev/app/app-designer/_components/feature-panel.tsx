@@ -36,6 +36,7 @@ const featureSchema = z.object({
   description: z.string().min(1),
   data_flows: z.array(z.string()),
   features: z.array(z.string()),
+  modules: z.array(z.string()),
 })
 
 export default function FeaturePanel() {
@@ -58,6 +59,7 @@ export default function FeaturePanel() {
     description: selectedNode?.component.description || '',
     features: selectedNode?.component.features?.map((d) => d.id) || [],
     data_flows: [],
+    modules: [],
   }
 
   const form = useForm({
@@ -110,8 +112,9 @@ export default function FeaturePanel() {
       if (!selectedNode.menuName || !selectedNode.component.description) {
         setNodes(nodes.filter((n) => n.id !== selectedNode.id))
         setEdges(edges.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id))
-        setSelectedNode(undefined)
       }
+
+      setSelectedNode(undefined)
     }
   }
 
@@ -208,48 +211,54 @@ export default function FeaturePanel() {
         </div>
 
         <div className="grid grid-rows-2 gap-5 h-full min-h-0">
-          <div className="flex flex-col gap-2 pb-5 border-b border-foreground/30 min-h-0">
-            <h2 className="font-semibold text-foreground/80 leading-none">Features</h2>
+          <div className="flex flex-col gap-2 pb-5 border-foreground/30 min-h-0">
+            <h2 className="font-semibold text-foreground/80 leading-none">Featues</h2>
             <div className="flex flex-col gap-1 overflow-y-auto flex-1 min-h-0">
-              <FormField
-                control={form.control}
-                name="features"
-                render={() => (
-                  <FormItem>
-                    {featureOptions &&
-                      featureOptions.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="features"
-                          render={({ field }) => {
-                            return (
-                              <FormItem key={item.id} className="flex gap-2 items-center">
+              <Command className="border">
+                <CommandInput placeholder="Search data source component" />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup>
+                    {featureOptions.map((item) => (
+                      <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="features"
+                        render={({ field }) => {
+                          const isChecked = field.value?.includes(item.id)
+                          return (
+                            <CommandItem key={item.id} className="flex items-center gap-2 p-0">
+                              <FormItem
+                                key={item.id}
+                                className="flex gap-2 items-center w-full p-2"
+                              >
                                 <FormControl>
-                                  <Checkbox
-                                    className="w-7 h-7 bg-background shadow-none"
-                                    checked={field.value?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, item.id])
-                                        : field.onChange(
-                                            field.value?.filter((value) => value !== item.id)
-                                          )
-                                    }}
-                                  />
+                                  <div className="items-center flex h-7 w-7">
+                                    <Checkbox
+                                      className="w-7 h-7 bg-background shadow-none"
+                                      checked={isChecked}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, item.id])
+                                          : field.onChange(
+                                              field.value?.filter((value) => value !== item.id)
+                                            )
+                                      }}
+                                    />
+                                  </div>
                                 </FormControl>
                                 <FormLabel className="px-3 py-2 bg-background w-full rounded border">
                                   {item.name}
                                 </FormLabel>
                               </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                            </CommandItem>
+                          )
+                        }}
+                      />
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
             </div>
           </div>
 

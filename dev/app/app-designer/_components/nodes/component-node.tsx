@@ -46,15 +46,15 @@ export default function ComponentNode(props: ComponentNodeProps) {
   const sourceHandleKeys = Object.keys(positioning).filter((p) => p !== data.targetPosition)
   const featureIcon =
     data.component.category === 'APP BUILDER' ? (
-      <Monitor />
+      <Monitor className="shrink-0" />
     ) : data.component.category === 'LOWCODE' ? (
-      <MonitorCog />
+      <MonitorCog className="shrink-0" />
     ) : data.component.category === 'WORKFLOW' ? (
-      <Webhook />
+      <Webhook className="shrink-0" />
     ) : data.component.category === 'INTEGRATION' ? (
-      <Zap />
+      <Zap className="shrink-0" />
     ) : data.component.category === 'INSIGHT' ? (
-      <PieChart />
+      <PieChart className="shrink-0" />
     ) : undefined
 
   return (
@@ -79,14 +79,14 @@ export default function ComponentNode(props: ComponentNodeProps) {
           )
         })}
 
-      <div className="flex flex-col gap-1 py-2 px-4 rounded-md border bg-muted text-sm w-72 shrink-0">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-1 py-2 px-4 rounded-md border bg-muted text-sm w-72 overflow-hidden">
+        <div className="flex justify-between items-center w-full">
+          <div className="flex items-center gap-3 min-w-0">
             {featureIcon}
-            <p className="pl-3 border-l border-foreground">{data.component.title}</p>
+            <p className="pl-3 border-l border-foreground truncate">{data.component.title}</p>
           </div>
 
-          <div className="flex gap-1">
+          <div className="flex gap-1 w-fit">
             <Button
               size={'icon'}
               variant={'ghost'}

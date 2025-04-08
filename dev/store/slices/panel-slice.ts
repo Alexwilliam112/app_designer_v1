@@ -9,6 +9,10 @@ export interface PanelSlice {
   selectedNode: ComponentNodeData | undefined
   setSelectedNode(selected: ComponentNodeData | undefined): void
   updateComponent(component: ComponentNodeData): Promise<void>
+  saveModule({ name, id_estimation }: {
+    name: string;
+    id_estimation: string;
+  }): Promise<void>
 }
 
 export const createPanelSlice: StateCreator<PanelSlice & NodeSlice & DataSlice, [], [], PanelSlice> = (
@@ -48,4 +52,11 @@ export const createPanelSlice: StateCreator<PanelSlice & NodeSlice & DataSlice, 
       alert("Error saving flow:" + String(error))
     }
   },
+  async saveModule({ name, id_estimation }: { name: string, id_estimation: string }) {
+    try {
+      await flowApi.saveModules({ id_estimation, payload: { name } })
+    } catch (error: unknown) {
+      alert("Error saving module:" + String(error))
+    }
+  }
 })

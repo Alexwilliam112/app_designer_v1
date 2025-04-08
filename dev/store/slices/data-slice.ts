@@ -22,7 +22,7 @@ export interface DataSlice {
     baseComponentsError: boolean
     baseComponentsMessage: string
 
-    modulesData: ModuleId[] | []
+    modulesData: ForeignObj[] | []
     modulesLoading: boolean
     modulesError: boolean
     modulesMessage: string

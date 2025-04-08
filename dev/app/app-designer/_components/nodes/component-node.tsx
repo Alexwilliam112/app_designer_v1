@@ -23,7 +23,7 @@ import {
   CommandGroup,
   CommandItem,
 } from '@/components/ui/command'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useFlowStore } from '@/store/use-store'
 
 interface ComponentNodeProps extends NodeProps {
@@ -115,7 +115,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <CurlyBraces className="w-4 h-4" />
-                  <p>{data.component.module.name}</p>
+                  <p className="truncate">{data.component.module.name}</p>
                 </div>
               </td>
             </tr>
@@ -125,7 +125,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <CurlyBraces className="w-4 h-4" />
-                  <p>{data.component.category}</p>
+                  <p className="truncate">{data.component.category}</p>
                 </div>
               </td>
             </tr>
@@ -135,7 +135,7 @@ export default function ComponentNode(props: ComponentNodeProps) {
               <td>
                 <div className="flex gap-2 py-1 px-2 bg-background rounded">
                   <Code2 className="w-4 h-4" />
-                  <p>{data.component.type}</p>
+                  <p className="truncate">{data.component.type}</p>
                 </div>
               </td>
             </tr>

@@ -6,11 +6,6 @@ declare global {
         name: string
     }
 
-    interface ModuleId {
-        id: string
-        name: string
-    }
-
     interface ComponentNodeData extends Record<string, unknown> {
         id: string
         menuName: string
@@ -24,7 +19,7 @@ declare global {
         description: string
         category: string
         type: string
-        module: ModuleId
+        module: ForeignObj
         features: ForeignObj[]
     }
 

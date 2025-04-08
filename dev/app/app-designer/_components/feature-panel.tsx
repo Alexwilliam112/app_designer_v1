@@ -41,22 +41,27 @@ const featureSchema = z.object({
 })
 
 export default function FeaturePanel() {
-  const updateNodeInternals = useUpdateNodeInternals()
-
-  const [featureOptions, setFeatureOptions] = useState<ForeignObj[]>([])
-
   const nodes = useFlowStore((state) => state.nodes)
   const edges = useFlowStore((state) => state.edges)
   const selectedNode = useFlowStore((state) => state.selectedNode)
+  const modulesData = useFlowStore((state) => state.modulesData)
+  const id_estimation = useFlowStore((state) => state.id_estimation)
   const setNodes = useFlowStore((state) => state.setNodes)
   const setEdges = useFlowStore((state) => state.setEdges)
-  const modulesData = useFlowStore((state) => state.modulesData)
+  const saveModule = useFlowStore((state) => state.saveModule)
+  const fetchModules = useFlowStore((state) => state.fetchModules)
+
+  const updateNodeInternals = useUpdateNodeInternals()
+
+  const [featureOptions, setFeatureOptions] = useState<ForeignObj[]>([])
+  const [moduleInput, setModuleInput] = useState<string | undefined>()
+  const [addingModule, setAddingModule] = useState(false)
 
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode)
   const save = useFlowStore((state) => state.updateComponent)
 
   const defaultValues = {
-    module: '',
+    module: selectedNode?.component.module.id || '',
     name: selectedNode?.component.title || '',
     description: selectedNode?.component.description || '',
     features: selectedNode?.component.features?.map((d) => d.id) || [],
@@ -76,6 +81,10 @@ export default function FeaturePanel() {
 
     const updated = selectedNode
 
+    updated.component.module = modulesData.find((m) => m.id === values.module) || {
+      id: '',
+      name: '',
+    }
     updated.menuName = values.name
     updated.component.title = values.name
     updated.component.description = values.description
@@ -118,6 +127,38 @@ export default function FeaturePanel() {
       setSelectedNode(undefined)
     }
   }
+
+  const onAddModule = async () => {
+    try {
+      setAddingModule(true)
+
+      if (!id_estimation) {
+        console.error('id_estimation is required as params')
+        return
+      }
+
+      if (!moduleInput) {
+        console.error('Modulename is required')
+        return
+      }
+
+      await saveModule({ id_estimation, name: moduleInput })
+
+      await fetchModules()
+    } catch (error: unknown) {
+      console.error(String(error))
+    } finally {
+      setAddingModule(false)
+    }
+  }
+
+  useEffect(
+    () => () => {
+      console.log(form.watch())
+      console.log(selectedNode)
+    },
+    [form.formState]
+  )
 
   const featureIcon =
     selectedNode?.component.category === 'APP BUILDER' ? (
@@ -163,7 +204,7 @@ export default function FeaturePanel() {
             name="module"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Select a fruit</FormLabel>
+                <FormLabel>Module</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -177,23 +218,38 @@ export default function FeaturePanel() {
                       >
                         {field.value
                           ? modulesData.find((item) => item.id === field.value)?.name
-                          : 'Select fruit...'}
+                          : 'Select or create a module...'}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Search fruit..." />
-                      <CommandList>
-                        <CommandEmpty>No fruit found.</CommandEmpty>
+                      <CommandInput
+                        value={moduleInput}
+                        onValueChange={setModuleInput}
+                        placeholder="Search fruit..."
+                      />
+                      <CommandList className="min-w-[22vw]">
+                        <CommandEmpty>
+                          <Button
+                            variant={'ghost'}
+                            className="w-full mx-1"
+                            onClick={onAddModule}
+                            disabled={addingModule}
+                          >
+                            {addingModule
+                              ? `Creating '${moduleInput}'...`
+                              : `Create '${moduleInput}'`}
+                          </Button>
+                        </CommandEmpty>
                         <CommandGroup>
                           {modulesData.map((item) => (
                             <CommandItem
                               key={item.id}
-                              value={item.id}
-                              onSelect={(value) => {
-                                form.setValue('module', value)
+                              value={item.name}
+                              onSelect={() => {
+                                form.setValue('module', item.id)
                               }}
                             >
                               <Check

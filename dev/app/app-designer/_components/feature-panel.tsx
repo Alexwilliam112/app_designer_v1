@@ -21,6 +21,14 @@ import { Monitor, X, MonitorCog, Webhook, Zap, PieChart } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 
 const featureSchema = z.object({
   module: z.string().optional(),
@@ -246,16 +254,13 @@ export default function FeaturePanel() {
           </div>
 
           <div className="flex flex-col gap-2 pb-5 border-foreground/30 min-h-0">
-            <div className="space-y-2">
-              <h2 className="font-semibold text-foreground/80 leading-none">GET Data From</h2>
-              <Search />
-            </div>
+            <h2 className="font-semibold text-foreground/80 leading-none">GET Data From</h2>
             <div className="flex flex-col gap-1 overflow-y-auto flex-1 min-h-0">
-              <FormField
-                control={form.control}
-                name="data_flows"
-                render={() => (
-                  <FormItem>
+              <Command className="border">
+                <CommandInput placeholder="Search data source component" />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup>
                     {nodes
                       .slice()
                       .filter((n) => !n.id.includes('entry') && n.id !== selectedNode?.id)
@@ -265,33 +270,40 @@ export default function FeaturePanel() {
                           control={form.control}
                           name="data_flows"
                           render={({ field }) => {
+                            const isChecked = field.value?.includes(item.id)
                             return (
-                              <FormItem key={item.id} className="flex gap-2 items-center">
-                                <FormControl>
-                                  <Checkbox
-                                    className="w-7 h-7 bg-background shadow-none"
-                                    checked={field.value?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, item.id])
-                                        : field.onChange(
-                                            field.value?.filter((value) => value !== item.id)
-                                          )
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="px-3 py-2 bg-background w-full rounded border">
-                                  {item.data.menuName}
-                                </FormLabel>
-                              </FormItem>
+                              <CommandItem key={item.id} className="flex items-center gap-2 p-0">
+                                <FormItem
+                                  key={item.id}
+                                  className="flex gap-2 items-center w-full p-2"
+                                >
+                                  <FormControl>
+                                    <div className="items-center flex h-7 w-7">
+                                      <Checkbox
+                                        className="w-7 h-7 bg-background shadow-none"
+                                        checked={isChecked}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([...field.value, item.id])
+                                            : field.onChange(
+                                                field.value?.filter((value) => value !== item.id)
+                                              )
+                                        }}
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormLabel className="px-3 py-2 bg-background w-full rounded border">
+                                    {item.data.menuName}
+                                  </FormLabel>
+                                </FormItem>
+                              </CommandItem>
                             )
                           }}
                         />
                       ))}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </CommandGroup>
+                </CommandList>
+              </Command>
             </div>
           </div>
         </div>

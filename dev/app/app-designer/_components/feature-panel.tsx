@@ -17,18 +17,20 @@ import flowApi from '@/services/flow-api'
 import { useFlowStore } from '@/store/use-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUpdateNodeInternals } from '@xyflow/react'
-import { Monitor, X, MonitorCog, Webhook, Zap, PieChart } from 'lucide-react'
+import { Monitor, X, MonitorCog, Webhook, Zap, PieChart, ChevronsUpDown, Check } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
   Command,
-  CommandEmpty,
-  CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
+  CommandEmpty,
+  CommandItem,
+  CommandGroup,
 } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 const featureSchema = z.object({
   module: z.string().optional(),
@@ -36,7 +38,6 @@ const featureSchema = z.object({
   description: z.string().min(1),
   data_flows: z.array(z.string()),
   features: z.array(z.string()),
-  modules: z.array(z.string()),
 })
 
 export default function FeaturePanel() {
@@ -49,6 +50,7 @@ export default function FeaturePanel() {
   const selectedNode = useFlowStore((state) => state.selectedNode)
   const setNodes = useFlowStore((state) => state.setNodes)
   const setEdges = useFlowStore((state) => state.setEdges)
+  const modulesData = useFlowStore((state) => state.modulesData)
 
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode)
   const save = useFlowStore((state) => state.updateComponent)
@@ -59,7 +61,6 @@ export default function FeaturePanel() {
     description: selectedNode?.component.description || '',
     features: selectedNode?.component.features?.map((d) => d.id) || [],
     data_flows: [],
-    modules: [],
   }
 
   const form = useForm({
@@ -161,11 +162,54 @@ export default function FeaturePanel() {
             control={form.control}
             name="module"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Module</FormLabel>
-                <FormControl>
-                  <Input placeholder="Type here" {...field} className="bg-background shadow-none" />
-                </FormControl>
+              <FormItem className="flex flex-col">
+                <FormLabel>Select a fruit</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value
+                          ? modulesData.find((item) => item.id === field.value)?.name
+                          : 'Select fruit...'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search fruit..." />
+                      <CommandList>
+                        <CommandEmpty>No fruit found.</CommandEmpty>
+                        <CommandGroup>
+                          {modulesData.map((item) => (
+                            <CommandItem
+                              key={item.id}
+                              value={item.id}
+                              onSelect={(value) => {
+                                form.setValue('module', value)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  item.id === field.value ? 'opacity-100' : 'opacity-0'
+                                )}
+                              />
+                              {item.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}

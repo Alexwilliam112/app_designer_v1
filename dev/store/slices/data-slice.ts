@@ -30,6 +30,7 @@ export interface DataSlice {
     setIdEstimation(id: string): void
 
     fetchBaseComponents(): Promise<void>
+    fetchModules(): Promise<void>
 }
 
 export const createDataSlice: StateCreator<DataSlice & NodeSlice & PanelSlice, [], [], DataSlice> = (set, get) => ({

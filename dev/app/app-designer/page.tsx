@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation'
 
 export default function AppDesignerPage() {
   const setIdEstimation = useFlowStore((state) => state.setIdEstimation)
+  const fetchModules = useFlowStore((state) => state.fetchModules)
   const searchParams = useSearchParams()
   const id_estimation = searchParams.get('id_estimation') || ''
 
@@ -21,6 +22,10 @@ export default function AppDesignerPage() {
     await fetchNodes(id_estimation)
   }, [id_estimation])
 
+  const fetchModulesCallback = useCallback(async () => {
+    await fetchModules()
+  }, [])
+
   useEffect(() => {
     fetchCompsCallback()
   }, [])
@@ -29,6 +34,7 @@ export default function AppDesignerPage() {
     if (id_estimation) {
       setIdEstimation(id_estimation)
       fetchNodesCallback()
+      fetchModulesCallback()
     }
   }, [id_estimation, fetchNodesCallback])
 

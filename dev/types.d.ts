@@ -7,7 +7,7 @@ declare global {
     }
 
     interface ModuleId {
-        id_module: string
+        id: string
         name: string
     }
 

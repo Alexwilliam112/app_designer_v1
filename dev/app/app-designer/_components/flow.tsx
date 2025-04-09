@@ -6,11 +6,12 @@ import { useCallback } from 'react'
 import EntryNode from './nodes/entry-node'
 import ComponentNode from './nodes/component-node'
 import { useFlowStore } from '@/store/use-store'
-import FeaturePanel from './feature-panel'
+import FeaturePanel from './panels/feature-panel'
 import ELK from 'elkjs/lib/elk.bundled.js'
 import CustomEdge from './edge'
 import { Button } from '@/components/ui/button'
 import UserFlowEdge from './user-flow-edge'
+import ActionPanel from './panels/action-panel'
 
 const elk = new ELK()
 
@@ -102,47 +103,7 @@ export default function Flow() {
       fitView
     >
       <Background gap={60} variant={BackgroundVariant.Dots} />
-      <Panel position="top-left">
-        <div className="relative flex p-1 gap-3 bg-muted border rounded-md uppercase text-[0.4rem]">
-          <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12">
-            <ChartPie className="text-primary w-3 h-3" />
-            <p>Insight</p>
-          </div>
-
-          <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12">
-            <Zap className="text-primary w-3 h-3" />
-            <p>Workflow</p>
-          </div>
-
-          <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12">
-            <Webhook className="text-primary w-3 h-3" />
-            <p>Integrations</p>
-          </div>
-
-          <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12">
-            <MonitorCog className="text-primary w-3 h-3" />
-            <p>Lowcode</p>
-          </div>
-
-          <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12">
-            <Monitor className="text-primary w-3 h-3" />
-            <p>App Builder</p>
-          </div>
-
-          <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12">
-            <Database className="text-primary w-3 h-3" />
-            <p>Database</p>
-          </div>
-
-          <div
-            onClick={addStartPoint}
-            className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-12 w-12"
-          >
-            <Play className="text-primary w-3 h-3" />
-            <p>Start Point</p>
-          </div>
-        </div>
-      </Panel>
+      <ActionPanel />
       <Panel position="top-right">
         <div className="flex gap-2">
           <Button
@@ -171,12 +132,7 @@ export default function Flow() {
           </Button>
         </div>
       </Panel>
-
-      {selectedNode && (
-        <Panel position="top-right" className="w-fit">
-          <FeaturePanel />
-        </Panel>
-      )}
+      {selectedNode && <FeaturePanel />}
     </ReactFlow>
   )
 }

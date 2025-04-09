@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useCallback } from 'react'
 import { useFlowStore } from '@/store/use-store'
+import ModulesOverlay from './modules-overlay'
 
 export default function ActionPanel() {
   const nodes = useFlowStore((state) => state.nodes)
@@ -77,10 +78,7 @@ export default function ActionPanel() {
       </div>
 
       <div className="relative flex p-1 gap-3 bg-muted border rounded-md uppercase">
-        <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-14 w-14 overflow-visible">
-          <Group className="text-primary w-5 h-5 shrink-0" />
-          <p className="text-nowrap">Modules</p>
-        </div>
+        <ModulesOverlay />
 
         <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-14 w-14 overflow-visible">
           <ChartAreaIcon className="text-primary w-5 h-5 shrink-0" />

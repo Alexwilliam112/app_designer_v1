@@ -1,16 +1,15 @@
 'use client'
 
 import { Background, BackgroundVariant, Node, Panel, ReactFlow } from '@xyflow/react'
-import { ChartPie, Database, Monitor, MonitorCog, Play, Webhook, Zap } from 'lucide-react'
 import { useCallback } from 'react'
 import EntryNode from './nodes/entry-node'
 import ComponentNode from './nodes/component-node'
 import { useFlowStore } from '@/store/use-store'
 import FeaturePanel from './panels/feature-panel'
 import ELK from 'elkjs/lib/elk.bundled.js'
-import CustomEdge from './edge'
+import CustomEdge from './edges/edge'
 import { Button } from '@/components/ui/button'
-import UserFlowEdge from './user-flow-edge'
+import UserFlowEdge from './edges/user-flow-edge'
 import ActionPanel from './panels/action-panel'
 
 const elk = new ELK()
@@ -40,19 +39,6 @@ export default function Flow() {
   const onNodesChange = useFlowStore((state) => state.onNodesChange)
   const onConnect = useFlowStore((state) => state.onConnect)
   const selectedNode = useFlowStore((state) => state.selectedNode)
-
-  const addStartPoint = useCallback(() => {
-    const startNode: Node = {
-      id: `entry-${Date.now()}`,
-      type: 'entryPoint',
-      position: { x: 0, y: 0 + nodes.length * 50 },
-      data: {
-        id: `entry-${Date.now()}`,
-      },
-    }
-
-    setNodes([...nodes, startNode as Node<ComponentNodeData>])
-  }, [nodes, setNodes])
 
   const applyLayout = useCallback(
     async (layoutOptions: any) => {

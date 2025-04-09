@@ -20,6 +20,7 @@ import { Group, Trash2 } from 'lucide-react'
 export default function ModulesOverlay() {
   const nodes = useFlowStore((state) => state.nodes)
   const modules = useFlowStore((state) => state.modulesData)
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -28,49 +29,137 @@ export default function ModulesOverlay() {
           <p className="text-nowrap">Modules</p>
         </div>
       </DialogTrigger>
-      <DialogContent className="flex flex-col lg:max-w-[95vw] h-[90vh]">
+      <DialogContent className="flex flex-1 flex-col lg:max-w-[95vw] h-[90vh] overflow-hidden">
         <DialogHeader className="pb-3">
           <DialogTitle>Modules And Grouping</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-rows-2 h-full overflow-hidden">
-          <div className="space-y-2 h-full">
+        <div className="grid grid-rows-2 gap-2 h-full relative min-h-0">
+          <div className="flex flex-col gap-2 h-full min-h-0">
             <h2 className="font-bold">Module Mapping</h2>
-
-            <Table>
-              <TableHeader>
-                <TableHead className="w-[25%]">Module Name</TableHead>
-                <TableHead className="w-[25%]">Menu Name</TableHead>
-                <TableHead className="w-full">Description</TableHead>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="border-t">Select Module</TableCell>
-                  <TableCell className="border-t">Menu Name</TableCell>
-                  <TableCell className="border-t">Menu Name</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <div className="border rounded-md overflow-hidden flex flex-col h-full">
+              <div className="flex shrink relative h-full">
+                <Table>
+                  <TableHeader className="sticky top-0 z-10 bg-muted">
+                    <TableRow>
+                      <TableHead className="w-[25%]">Module Name</TableHead>
+                      <TableHead className="w-[25%]">Menu Name</TableHead>
+                      <TableHead className="w-full">Description</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {modules.map((m) => (
+                      <TableRow key={m.id}>
+                        <TableCell>Select Module</TableCell>
+                        <TableCell>Menu Name</TableCell>
+                        <TableCell>Menu Name</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2 h-full">
+          <div className="flex flex-1 flex-col gap-2 h-full min-h-0">
             <h2 className="font-bold">Modules</h2>
-
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Module Name</TableCell>
-                  <TableCell className="flex justify-end text-destructive">
-                    <Button
-                      size={'icon'}
-                      variant={'ghost'}
-                      className="hover:bg-destructive hover:text-white"
-                    >
-                      <Trash2 />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <div className="border rounded-md overflow-hidden flex flex-col h-full">
+              <div className="flex shrink relative h-full">
+                <Table>
+                  <TableHeader className="sticky top-0 bg-muted z-10">
+                    <TableRow>
+                      <TableHead>Module Name</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>{' '}
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>{' '}
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>{' '}
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>{' '}
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>{' '}
+                    <TableRow>
+                      <TableCell>Module Name</TableCell>
+                      <TableCell className="flex justify-end text-destructive">
+                        <Button
+                          size={'icon'}
+                          variant={'ghost'}
+                          className="hover:bg-destructive hover:text-white"
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>

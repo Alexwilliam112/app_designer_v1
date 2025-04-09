@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/table'
 import { useFlowStore } from '@/store/use-store'
 import { Group, Trash2 } from 'lucide-react'
+import ModulesSelect from '../modules-select'
 
 export default function ModulesOverlay() {
   const nodes = useFlowStore((state) => state.nodes)
@@ -47,13 +48,17 @@ export default function ModulesOverlay() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {modules.map((m) => (
-                      <TableRow key={m.id}>
-                        <TableCell>Select Module</TableCell>
-                        <TableCell>Menu Name</TableCell>
-                        <TableCell>Menu Name</TableCell>
-                      </TableRow>
-                    ))}
+                    {nodes
+                      .filter((n) => n.type === 'component')
+                      .map((n) => (
+                        <TableRow key={n.id}>
+                          <TableCell>
+                            <ModulesSelect nodeId={n.id} />
+                          </TableCell>
+                          <TableCell>{n.data.menuName}</TableCell>
+                          <TableCell>{n.data.component.description}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </div>
@@ -95,7 +100,7 @@ export default function ModulesOverlay() {
                           <Trash2 />
                         </Button>
                       </TableCell>
-                    </TableRow>{' '}
+                    </TableRow>
                     <TableRow>
                       <TableCell>Module Name</TableCell>
                       <TableCell className="flex justify-end text-destructive">
@@ -107,7 +112,7 @@ export default function ModulesOverlay() {
                           <Trash2 />
                         </Button>
                       </TableCell>
-                    </TableRow>{' '}
+                    </TableRow>
                     <TableRow>
                       <TableCell>Module Name</TableCell>
                       <TableCell className="flex justify-end text-destructive">
@@ -119,7 +124,7 @@ export default function ModulesOverlay() {
                           <Trash2 />
                         </Button>
                       </TableCell>
-                    </TableRow>{' '}
+                    </TableRow>
                     <TableRow>
                       <TableCell>Module Name</TableCell>
                       <TableCell className="flex justify-end text-destructive">
@@ -131,7 +136,7 @@ export default function ModulesOverlay() {
                           <Trash2 />
                         </Button>
                       </TableCell>
-                    </TableRow>{' '}
+                    </TableRow>
                     <TableRow>
                       <TableCell>Module Name</TableCell>
                       <TableCell className="flex justify-end text-destructive">
@@ -143,7 +148,7 @@ export default function ModulesOverlay() {
                           <Trash2 />
                         </Button>
                       </TableCell>
-                    </TableRow>{' '}
+                    </TableRow>
                     <TableRow>
                       <TableCell>Module Name</TableCell>
                       <TableCell className="flex justify-end text-destructive">

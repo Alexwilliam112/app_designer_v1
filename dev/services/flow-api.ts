@@ -46,7 +46,7 @@ const flowApi = {
 
         if (error) throw new Error(message)
 
-        return data as ModuleId[]
+        return data as ForeignObj[]
     },
     async saveModules({ id_estimation, payload }: { id_estimation: string, payload: { name: string } }) {
         const url = new URL("https://api-oos.jojonomic.com/27407/effort-calculator/v2/add-module")
@@ -61,7 +61,7 @@ const flowApi = {
 
         if (error) throw new Error(message)
 
-        return data as ModuleId[]
+        return data as ForeignObj[]
     },
     async saveFlow({ id_estimation, payload }: { id_estimation: string, payload: { nodes: Node[]; edges: Edge[] } }) {
         const url = new URL("https://api-oos.jojonomic.com/27407/effort-calculator/v2/save-flow")

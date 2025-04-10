@@ -7,7 +7,6 @@ import {
   ChartPie,
   Database,
   FileDown,
-  Group,
   Monitor,
   MonitorCog,
   Play,
@@ -17,6 +16,7 @@ import {
 import { useCallback } from 'react'
 import { useFlowStore } from '@/store/use-store'
 import ModulesOverlay from './modules-overlay'
+import EstimationDrawer from './estimation-drawer'
 
 export default function ActionPanel() {
   const nodes = useFlowStore((state) => state.nodes)
@@ -80,10 +80,7 @@ export default function ActionPanel() {
       <div className="relative flex p-1 gap-3 bg-muted border rounded-md uppercase">
         <ModulesOverlay />
 
-        <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-14 w-14 overflow-visible">
-          <ChartAreaIcon className="text-primary w-5 h-5 shrink-0" />
-          <p className="text-nowrap">Estimation</p>
-        </div>
+        <EstimationDrawer />
 
         <div className="flex flex-col gap-1 items-center justify-center p-1 rounded hover:bg-muted-foreground/10 hover:cursor-pointer transition-colors duration-200 h-14 w-14 overflow-visible">
           <Banknote className="text-primary w-5 h-5 shrink-0" />

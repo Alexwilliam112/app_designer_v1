@@ -139,7 +139,7 @@ export function DataTableColumnHeader<TData, TValue>({
       </DropdownMenu>
 
       <Input
-        className="h-8 text-xs"
+        className="bg-background shadow-none h-8"
         placeholder={`Filter ${column.columnDef.id}...`}
         value={column.getFilterValue() as string}
         onChange={(e) => column.setFilterValue(e.target.value)}

@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/command'
 import { DataTable } from '@/components/data-table'
 import { moduleMappingColumns } from './module-mapping-columns'
+import { modulesColumns } from './modules-columns'
 
 export default function ModulesOverlay() {
   const nodes = useFlowStore((state) => state.nodes)
@@ -45,30 +46,21 @@ export default function ModulesOverlay() {
         <div className="grid grid-rows-2 gap-2 h-full relative min-h-0">
           <div className="flex flex-col gap-2 h-full min-h-0">
             <h2 className="font-bold">Module Mapping</h2>
-            <div className="flex shrink relative h-full">
-              <DataTable
-                columns={moduleMappingColumns}
-                data={nodes.filter((n) => n.type === 'component')}
-              />
+            <div className="overflow-hidden flex w-full h-full">
+              <div className="flex shrink relative h-full w-full">
+                <DataTable
+                  columns={moduleMappingColumns}
+                  data={nodes.filter((n) => n.type === 'component')}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-1 flex-col gap-2 h-full min-h-0">
+          <div className="flex flex-1 flex-col gap-2 h-full min-h-0 w-full">
             <h2 className="font-bold">Modules</h2>
-            <div className="border rounded-md overflow-hidden flex flex-col h-full">
-              <div className="flex shrink relative h-full">
-                <Command>
-                  <CommandInput placeholder="Search modules" />
-                  <CommandList className="overflow-auto">
-                    <CommandGroup>
-                      {modules.map((item) => (
-                        <CommandItem key={item.id} value={item.name}>
-                          {item.name}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
+            <div className="overflow-hidden flex w-full h-full">
+              <div className="flex shrink relative h-full w-full">
+                <DataTable data={modules} columns={modulesColumns} />
               </div>
             </div>
           </div>

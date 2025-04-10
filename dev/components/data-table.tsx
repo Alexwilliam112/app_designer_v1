@@ -56,14 +56,14 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   })
 
   return (
-    <div className="w-full rounded-md border">
+    <div className="flex w-full rounded-md border p-1 shrink">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="px-4 py-2">
+                  <TableHead key={header.id} className="px-4 py-2 sticky top-0 z-10 bg-background">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}

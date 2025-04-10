@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -15,8 +14,17 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useFlowStore } from '@/store/use-store'
-import { Group, Trash2 } from 'lucide-react'
+import { Group } from 'lucide-react'
 import ModulesSelect from '../modules-select'
+import {
+  Command,
+  CommandItem,
+  CommandList,
+  CommandGroup,
+  CommandInput,
+} from '@/components/ui/command'
+import { DataTable } from '@/components/data-table'
+import { moduleMappingColumns } from './module-mapping-columns'
 
 export default function ModulesOverlay() {
   const nodes = useFlowStore((state) => state.nodes)
@@ -37,31 +45,11 @@ export default function ModulesOverlay() {
         <div className="grid grid-rows-2 gap-2 h-full relative min-h-0">
           <div className="flex flex-col gap-2 h-full min-h-0">
             <h2 className="font-bold">Module Mapping</h2>
-            <div className="border rounded-md overflow-hidden flex flex-col h-full">
-              <div className="flex shrink relative h-full">
-                <Table>
-                  <TableHeader className="sticky top-0 z-10 bg-muted">
-                    <TableRow>
-                      <TableHead className="w-[25%]">Module Name</TableHead>
-                      <TableHead className="w-[25%]">Menu Name</TableHead>
-                      <TableHead className="w-full">Description</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {nodes
-                      .filter((n) => n.type === 'component')
-                      .map((n) => (
-                        <TableRow key={n.id}>
-                          <TableCell>
-                            <ModulesSelect nodeId={n.id} />
-                          </TableCell>
-                          <TableCell>{n.data.menuName}</TableCell>
-                          <TableCell>{n.data.component.description}</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
+            <div className="flex shrink relative h-full">
+              <DataTable
+                columns={moduleMappingColumns}
+                data={nodes.filter((n) => n.type === 'component')}
+              />
             </div>
           </div>
 
@@ -69,100 +57,18 @@ export default function ModulesOverlay() {
             <h2 className="font-bold">Modules</h2>
             <div className="border rounded-md overflow-hidden flex flex-col h-full">
               <div className="flex shrink relative h-full">
-                <Table>
-                  <TableHeader className="sticky top-0 bg-muted z-10">
-                    <TableRow>
-                      <TableHead>Module Name</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Module Name</TableCell>
-                      <TableCell className="flex justify-end text-destructive">
-                        <Button
-                          size={'icon'}
-                          variant={'ghost'}
-                          className="hover:bg-destructive hover:text-white"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                <Command>
+                  <CommandInput placeholder="Search modules" />
+                  <CommandList className="overflow-auto">
+                    <CommandGroup>
+                      {modules.map((item) => (
+                        <CommandItem key={item.id} value={item.name}>
+                          {item.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
               </div>
             </div>
           </div>

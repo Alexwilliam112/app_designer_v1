@@ -65,9 +65,9 @@ export function AddNodeHandle({ data: { id, position, handlePosition, isSource }
       </PopoverTrigger>
       <PopoverContent className="mx-8 w-64 p-0" align="center" side="right">
         <Command>
-          <CommandInput placeholder="Type a command..." />
+          <CommandInput placeholder="Search a feature..." />
           <CommandList>
-            <CommandEmpty>No commands found.</CommandEmpty>
+            <CommandEmpty>No features found.</CommandEmpty>
             <CommandGroup heading="UTILITY">
               <CommandItem onSelect={() => onAddDecision()}>
                 <Network className="text-primary" />

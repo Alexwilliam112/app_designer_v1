@@ -36,6 +36,7 @@ export interface NodeSlice {
     { sourceId, targetId }: { sourceId?: string; targetId?: string },
     edgeLabel?: string
   ): void
+  addFeatureNodeRaw(id: string): void
   addDecisionNode(
     entryId: string,
     {
@@ -193,6 +194,56 @@ export const createNodeSlice: StateCreator<
     }
 
     setEdges([...edges, newEdge])
+
+    get().setSelectedNode(data)
+  },
+  addFeatureNodeRaw(id: string) {
+    const { nodes, setNodes, baseComponentGroup } = get()
+
+    const ids = id.split('/')
+    const group = baseComponentGroup.find((g) => g.id === ids[0])
+
+    if (!group) {
+      console.error(`Group with id ${ids[0]} not found`)
+      return
+    }
+
+    const item = group.items.find((i) => i.id === id) // Fixed: Changed g.id to i.id to match the full path
+
+    if (!item) {
+      console.error(`Item with groupId ${group?.id} not found`)
+      return
+    }
+
+    const targetPosition = ''
+
+    const initialObj = { id: '', name: '' }
+
+    const data: ComponentNodeData = {
+      id: '',
+      menuName: '',
+      targetPosition,
+      component: {
+        title: '',
+        id_component: item.id_component,
+        description: '',
+        module: initialObj,
+        category: group.label,
+        type: item.label,
+        features: [],
+      },
+    }
+
+    const newNode = {
+      id: `component-${Date.now()}`, // Using timestamp to ensure unique IDs
+      type: 'component',
+      position: { x: 0, y: 0 },
+      data,
+    }
+
+    newNode.data.id = newNode.id
+
+    setNodes([...nodes, newNode])
 
     get().setSelectedNode(data)
   },

@@ -7,24 +7,13 @@ import {
   CurlyBraces,
   Monitor,
   MonitorCog,
-  Network,
   Pencil,
   PieChart,
-  Plus,
   Trash2,
   Webhook,
   Zap,
 } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from '@/components/ui/command'
-import React, { useState } from 'react'
+import React from 'react'
 import { useFlowStore } from '@/store/use-store'
 import { positioning } from '@/lib/constants'
 import { AddNodeHandle } from './add-node-handle'

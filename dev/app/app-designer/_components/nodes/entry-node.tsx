@@ -55,9 +55,9 @@ export default function EntryNode({ data: { id } }: EntryNodeProps) {
       </PopoverTrigger>
       <PopoverContent className="w-64 p-0 mx-4" align="center" side="right">
         <Command>
-          <CommandInput placeholder="Type a command..." />
+          <CommandInput placeholder="Search a feature..." />
           <CommandList>
-            <CommandEmpty>No commands found.</CommandEmpty>
+            <CommandEmpty>No features found.</CommandEmpty>
             {group.map((com) => (
               <CommandGroup heading={com.label} key={com.id}>
                 {com.items.map((i) => (

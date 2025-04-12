@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 import { BaseEdge, EdgeLabelRenderer, EdgeProps, getSmoothStepPath } from '@xyflow/react'
 
-export const ButtonEdge = ({
+export const EdgeWithChild = ({
   sourceX,
   sourceY,
   targetX,

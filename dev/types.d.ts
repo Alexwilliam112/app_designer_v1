@@ -13,6 +13,13 @@ declare global {
         component: Feature
     }
 
+    interface DecisionNodeData extends Record<string, unknown> {
+        id: string
+        targetPosition: 'top' | 'bottom' | 'right' | 'left' | ''
+    }
+
+    type GeneralNode = Node<ComponentNodeData> | Node<DecisionNodeData>
+
     interface Feature {
         id_component: string
         title: string

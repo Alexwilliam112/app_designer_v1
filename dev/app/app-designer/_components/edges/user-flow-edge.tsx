@@ -1,6 +1,6 @@
 import { EdgeProps } from '@xyflow/react'
 import { memo } from 'react'
-import { ButtonEdge } from '@/components/button-edge'
+import { EdgeWithChild } from '@/components/button-edge'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 import { useFlowStore } from '@/store/use-store'
@@ -15,7 +15,7 @@ const UserFlowEdge = memo((props: EdgeProps) => {
   }
 
   return (
-    <ButtonEdge {...props}>
+    <EdgeWithChild {...props}>
       <Button
         variant={'ghost'}
         size={'icon'}
@@ -24,7 +24,7 @@ const UserFlowEdge = memo((props: EdgeProps) => {
       >
         <X className="w-1 h-1" />
       </Button>
-    </ButtonEdge>
+    </EdgeWithChild>
   )
 })
 

@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import flowApi from '@/services/flow-api'
 import { useFlowStore } from '@/store/use-store'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Panel, useUpdateNodeInternals } from '@xyflow/react'
+import { Node, Panel, useUpdateNodeInternals } from '@xyflow/react'
 import { Monitor, X, MonitorCog, Webhook, Zap, PieChart, ChevronsUpDown, Check } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -379,7 +379,7 @@ export default function FeaturePanel() {
                     <CommandGroup>
                       {nodes
                         .slice()
-                        .filter((n) => !n.id.includes('entry') && n.id !== selectedNode?.id)
+                        .filter((n) => n.id.includes('component') && n.id !== selectedNode?.id)
                         .map((item) => (
                           <FormField
                             key={item.id}
@@ -409,7 +409,7 @@ export default function FeaturePanel() {
                                       </div>
                                     </FormControl>
                                     <FormLabel className="px-2 py-[0.1rem] bg-background w-full rounded border text-xs">
-                                      {item.data.menuName}
+                                      {(item as Node<ComponentNodeData>).data.menuName}
                                     </FormLabel>
                                   </FormItem>
                                 </CommandItem>

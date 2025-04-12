@@ -11,17 +11,21 @@ import CustomEdge from './edges/edge'
 import { Button } from '@/components/ui/button'
 import UserFlowEdge from './edges/user-flow-edge'
 import ActionPanel from './panels/action-panel'
+import DecisionNode from './nodes/decision-node'
+import DecisionEdge from './edges/decision-edge'
 
 const elk = new ELK()
 
 const nodeTypes = {
   entryPoint: EntryNode,
   component: ComponentNode,
+  decision: DecisionNode,
 }
 
 const edgeTypes = {
   customEdge: CustomEdge,
   userFlowEdge: UserFlowEdge,
+  decisionEdge: DecisionEdge,
 }
 
 const defaultEdgeOptions = {
@@ -59,7 +63,7 @@ export default function Flow() {
 
       const result = await elk.layout(graph)
 
-      const updatedNodes: Node<ComponentNodeData>[] = nodes.map((node) => {
+      const updatedNodes: GeneralNode[] = nodes.map((node) => {
         const layoutNode = result.children?.find((n) => n.id === node.id)
         return layoutNode
           ? {

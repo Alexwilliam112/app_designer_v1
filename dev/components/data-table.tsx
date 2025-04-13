@@ -138,12 +138,14 @@ export function DataTableColumnHeader<TData, TValue>({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Input
-        className="bg-background shadow-none h-8"
-        placeholder={`Filter ${column.columnDef.id}...`}
-        value={column.getFilterValue() as string}
-        onChange={(e) => column.setFilterValue(e.target.value)}
-      />
+      {column.columnDef.id && (
+        <Input
+          className="bg-background shadow-none h-8"
+          placeholder={`Filter ${column.columnDef.id}...`}
+          value={column.getFilterValue() as string}
+          onChange={(e) => column.setFilterValue(e.target.value)}
+        />
+      )}
     </div>
   )
 }

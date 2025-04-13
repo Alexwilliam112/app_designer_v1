@@ -15,6 +15,18 @@ const flowApi = {
 
         return data as { nodes: Node<ComponentNodeData>[], edges: Edge[] }
     },
+    async getEstimationBreakdown({ id_estimation }: { id_estimation: string }) {
+        const url = new URL("https://api-oos.jojonomic.com/27407/effort-calculator/v2/index-breakdown")
+        url.searchParams.append('id_estimation', id_estimation)
+
+        const res = await fetch(url.toString())
+
+        const { data, error, message } = await res.json()
+
+        if (error) throw new Error(message)
+
+        return data as EstimationData[]
+    },
     async getBaseComponents() {
         const res = await fetch("https://api-oos.jojonomic.com/27407/effort-calculator/v2/base-components")
 

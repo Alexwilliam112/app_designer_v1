@@ -1,5 +1,6 @@
 'use client'
 
+import { DataTable } from '@/components/data-table'
 import {
   Drawer,
   DrawerContent,
@@ -8,8 +9,35 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { ChartAreaIcon } from 'lucide-react'
+import { estimationColumns } from './estimation-columns'
+import { useCallback, useEffect, useState } from 'react'
+import flowApi from '@/services/flow-api'
+import { useFlowStore } from '@/store/use-store'
 
 export default function EstimationDrawer() {
+  const id_estimation = useFlowStore((state) => state.id_estimation)
+  const [data, setData] = useState<EstimationData[]>([])
+  const [error, setError] = useState(false)
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  const fetchCallback = useCallback(async () => {
+    try {
+      const res = await flowApi.getEstimationBreakdown({ id_estimation })
+      setData(res)
+    } catch (error: unknown) {
+      setError(true)
+      setMessage(String(error))
+    } finally {
+      setLoading(false)
+    }
+  }, [id_estimation])
+
+  useEffect(() => {
+    if (id_estimation) {
+      fetchCallback()
+    }
+  }, [fetchCallback])
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -23,7 +51,9 @@ export default function EstimationDrawer() {
           <DrawerTitle>Estimation Breakdown</DrawerTitle>
         </DrawerHeader>
 
-        <div></div>
+        <div className="flex p-6 overflow-hidden">
+          <DataTable columns={estimationColumns} data={data} />
+        </div>
       </DrawerContent>
     </Drawer>
   )

@@ -50,6 +50,38 @@ declare global {
         label: string;
         icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
     }
+
+    interface EstimationData {
+        _id: string;
+        base_mh: number;
+        baseline_mh: number;
+        component_id: string;
+        component_name: string;
+        component_type: string;
+        created_at: number;
+        created_by: number;
+        description: string;
+        effort: string;
+        estimation_id: string;
+        feature: string;
+        fixing_mh: number;
+        id_detail: string;
+        issue_mh: number;
+        likelihood: number;
+        md_pm: number;
+        md_qa: number;
+        md_sa: number;
+        md_se: number;
+        md_ui: number;
+        menu: string;
+        module: string;
+        risk: number;
+        submenu: string;
+        total_md: number;
+        unit: string;
+        updated_at: number;
+        updated_by: number;
+    }
 }
 
 export { }

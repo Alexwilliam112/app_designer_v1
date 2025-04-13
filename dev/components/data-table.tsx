@@ -56,7 +56,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   })
 
   return (
-    <div className="flex w-full rounded-md border p-1 shrink">
+    <div className="flex w-full rounded-md border p-1 shrink z-10">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

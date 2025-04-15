@@ -245,6 +245,18 @@ export default function FeaturePanel() {
                             </Button>
                           </CommandEmpty>
                           <CommandGroup>
+                            {moduleInput && (
+                              <Button
+                                variant={'ghost'}
+                                className="w-full mx-1"
+                                onClick={onAddModule}
+                                disabled={addingModule}
+                              >
+                                {addingModule
+                                  ? `Creating '${moduleInput}'...`
+                                  : `Create '${moduleInput}'`}
+                              </Button>
+                            )}
                             {modulesData.map((item) => (
                               <CommandItem
                                 key={item.id}
@@ -301,8 +313,8 @@ export default function FeaturePanel() {
                     <Textarea
                       required
                       placeholder="Type here"
+                      className="bg-background shadow-none resize-none h-16 overflow-y-auto"
                       {...field}
-                      className="bg-background shadow-none resize-none"
                     />
                   </FormControl>
                   <FormMessage />

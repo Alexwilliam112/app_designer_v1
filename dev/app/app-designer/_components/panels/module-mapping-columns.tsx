@@ -2,10 +2,9 @@
 
 import { DataTableColumnHeader } from '@/components/data-table'
 import { ColumnDef } from '@tanstack/react-table'
-import { Node } from '@xyflow/react'
 import ModulesSelect from '../modules-select'
 
-export const moduleMappingColumns: ColumnDef<Node<ComponentNodeData>>[] = [
+export const moduleMappingColumns: ColumnDef<GeneralNode>[] = [
   {
     id: 'module',
     accessorKey: 'data.component.module.name',

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Play } from 'lucide-react'
+import { Play, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
@@ -25,13 +25,14 @@ interface EntryNodeProps {
 export default function EntryNode({ data: { id } }: EntryNodeProps) {
   const group = useFlowStore((state) => state.baseComponentGroup)
   const loading = useFlowStore((state) => state.baseComponentsLoading)
+  const deleteNode = useFlowStore((state) => state.deleteFeatureNode)
 
   const edges = useFlowStore((state) => state.edges)
   const addFeatureNode = useFlowStore((state) => state.addFeatureNode)
 
   const [open, setOpen] = useState(false)
 
-  const handleCommandSelect = (command: string) => {
+  const onSelect = (command: string) => {
     addFeatureNode(command, id, {})
     setOpen(false)
   }
@@ -61,7 +62,7 @@ export default function EntryNode({ data: { id } }: EntryNodeProps) {
             {group.map((com) => (
               <CommandGroup heading={com.label} key={com.id}>
                 {com.items.map((i) => (
-                  <CommandItem key={i.id} onSelect={() => handleCommandSelect(i.id)}>
+                  <CommandItem key={i.id} onSelect={() => onSelect(i.id)}>
                     <i.icon className="text-primary" /> {i.label}
                   </CommandItem>
                 ))}
@@ -69,6 +70,13 @@ export default function EntryNode({ data: { id } }: EntryNodeProps) {
             ))}
           </CommandList>
         </Command>
+        <Button
+          className="w-full rounded-t-none text-destructive hover:bg-destructive hover:text-white shadow-none"
+          variant={'outline'}
+          onClick={() => deleteNode(id)}
+        >
+          <Trash2 />
+        </Button>
       </PopoverContent>
     </Popover>
   )
